@@ -2,7 +2,7 @@
 name: courseware-workflow
 description: Create, revise, review, and deliver Lab HTML courseware with one live JSON and direct CST references. Main-agent-first; use a subagent only when the user explicitly requests exactly one.
 metadata:
-  version: "1.0.1"
+  version: "1.0.2"
   compatibility: "Codex, DSH Skill, DeepSeek Harness, Claude/Generic Markdown Agents"
   whenToUse: "当用户要求制作、修改、审查或交付 Lab HTML 课件，或要求恢复、检查本课件工作流时使用。"
 ---

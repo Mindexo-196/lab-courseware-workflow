@@ -1,6 +1,6 @@
 {
   "name": "courseware-workflow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Portable Lab HTML courseware workflow for Codex, DSH, Harness, and Markdown Agent hosts.",
   "author": {
     "name": "Courseware Workflow Contributors"

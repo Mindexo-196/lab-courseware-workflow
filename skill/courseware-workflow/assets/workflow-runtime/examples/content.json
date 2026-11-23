@@ -28,11 +28,11 @@
     "range_en": "Workflow Validation",
     "deck_title": "从内容到课件",
     "deck_title_en": "From Content to Courseware",
-    "deck_sub": "双 Agent 隔离生成与审查，由脚本装配和验证",
-    "deck_sub_en": "Separated generation and review with deterministic assembly",
+    "deck_sub": "Main Agent 完成生成与审查，由脚本装配和验证",
+    "deck_sub_en": "Main Agent generation and review with deterministic assembly",
     "date": "2026-11-21",
-    "members": "2622647 林政赫",
-    "members_en": "2622647 Lin Zhenghe",
+    "members": "示例成员",
+    "members_en": "Example Contributor",
     "deck_version": "1.0"
   },
   "content": {

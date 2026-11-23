@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.2
+
+- Replace personally identifying example metadata with a generic contributor.
+- Clarify the Main-Agent-first cover subtitle.
+- Extend privacy checks for student identifiers in member metadata.
+
 ## 1.0.1
 
 - 将可编辑 Skill、插件模板、构建脚本和发布产物分层。

@@ -1,6 +1,6 @@
 {
   "name": "courseware-workflow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Portable Lab HTML courseware Agent Skill and Codex plugin",
   "license": "MIT",

@@ -30,6 +30,7 @@ const FORBIDDEN = [
   { name: "absolute home path", pattern: /\/(?:home|Users)\/[^/\s]+/i },
   { name: "Windows home path", pattern: /[A-Z]:\\Users\\[^\\\s]+/i },
   { name: "private app identifier", pattern: /\b01[0-9a-f]{8}-[0-9a-f-]{27,}\b/i },
+  { name: "student identifier in member metadata", pattern: /"members(?:_en)?"\s*:\s*"[^"]*\d{6,}/i },
   { name: "email address", pattern: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i },
   { name: "private key", pattern: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/ },
   { name: "API key assignment", pattern: /\b(?:api[_-]?key|secret|password)\s*[:=]\s*["'][^"']{8,}/i },

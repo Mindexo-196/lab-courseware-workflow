@@ -1,7 +1,7 @@
 {
   "schema": "agent-skill-package/v1",
   "name": "courseware-workflow",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "主 Agent 默认完成；单一 live.json；仅按用户要求使用一个子 Agent",
   "skill_file": "SKILL.md",
   "license": "MIT",
@@ -31,7 +31,7 @@
     {
       "path": "CHANGELOG.md",
       "purpose": "Skill 版本变更记录",
-      "sha256": "2f6cae1c8e2d5108f3b939d55cf3e4a8809331bf8b26beb2cf44be5f92e155f4"
+      "sha256": "bdb8442511433b452569cd8f53ea3dc13b5162c1cf08fe6218da07de3644388d"
     },
     {
       "path": "LICENSE",
@@ -56,7 +56,7 @@
     {
       "path": "SKILL.md",
       "purpose": "Agent Skill 主入口",
-      "sha256": "43d7415e461787d18f00363c70c2f2748816fd9b9730f9af9a88d4c4d14fb3a0"
+      "sha256": "683d18f1a3f3edd95cbf9990f647304a58f72395c6a3296225629dbd0d476e6a"
     },
     {
       "path": "THIRD_PARTY_NOTICES.md",
@@ -101,7 +101,7 @@
     {
       "path": "assets/workflow-runtime/examples/content.json",
       "purpose": "可运行任务示例",
-      "sha256": "8f596d618e51ba3a20a6f6a7d181d9cfa36846324d5a933b2a9bb051c9b43dde"
+      "sha256": "22066a337a60f2b983b7f8a4168993dc57b1e4406d9494d4fca54ce32ca7877f"
     },
     {
       "path": "assets/workflow-runtime/live.schema.json",

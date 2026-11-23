@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="860" viewBox="0 0 1600 860" role="img" aria-labelledby="title desc">
+  <title id="title">Courseware Workflow component system</title>
+  <desc id="desc">Six connected components: content intake, CST core, live state, preview builder, quality gate, and delivery pack.</desc>
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#143A38" stroke-width="1"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000000" flood-opacity=".28"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 10 5 0 10Z" fill="#9EC7BD"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="860" fill="#061A1B"/>
+  <rect width="1600" height="860" fill="url(#grid)" opacity=".42"/>
+  <circle cx="1430" cy="110" r="230" fill="#0B8C76" opacity=".11"/>
+  <circle cx="130" cy="790" r="260" fill="#EFFF54" opacity=".05"/>
+
+  <g font-family="Inter, ui-sans-serif, system-ui, sans-serif">
+    <text x="88" y="92" fill="#EFFF54" font-size="20" font-weight="700" letter-spacing="4">COMPONENT SYSTEM</text>
+    <text x="88" y="152" fill="#F7F2E7" font-size="48" font-weight="760">Six parts. One courseware pipeline.</text>
+    <text x="88" y="194" fill="#9EC7BD" font-size="22">Structured inputs in. Reviewed, interactive courseware out.</text>
+
+    <g filter="url(#shadow)">
+      <g transform="translate(88 262)">
+        <rect width="430" height="200" rx="30" fill="#F7F2E7"/>
+        <circle cx="46" cy="46" r="24" fill="#061A1B"/>
+        <text x="46" y="53" fill="#EFFF54" font-size="19" font-weight="700" text-anchor="middle">01</text>
+        <text x="88" y="55" fill="#061A1B" font-size="27" font-weight="760">Content Intake</text>
+        <text x="32" y="108" fill="#52615E" font-size="20">Brief, metadata, outcomes, sources,</text>
+        <text x="32" y="138" fill="#52615E" font-size="20">and slide structure arrive as JSON.</text>
+        <rect x="32" y="164" width="158" height="20" rx="10" fill="#D7E8E4"/>
+      </g>
+
+      <g transform="translate(585 262)">
+        <rect width="430" height="200" rx="30" fill="#EFFF54"/>
+        <circle cx="46" cy="46" r="24" fill="#061A1B"/>
+        <text x="46" y="53" fill="#EFFF54" font-size="19" font-weight="700" text-anchor="middle">02</text>
+        <text x="88" y="55" fill="#061A1B" font-size="27" font-weight="760">CST Core</text>
+        <text x="32" y="108" fill="#405000" font-size="20">Content, design, and HTML template</text>
+        <text x="32" y="138" fill="#405000" font-size="20">remain separate and directly linked.</text>
+        <rect x="32" y="164" width="206" height="20" rx="10" fill="#CDDB3F"/>
+      </g>
+
+      <g transform="translate(1082 262)">
+        <rect width="430" height="200" rx="30" fill="#F7F2E7"/>
+        <circle cx="46" cy="46" r="24" fill="#061A1B"/>
+        <text x="46" y="53" fill="#EFFF54" font-size="19" font-weight="700" text-anchor="middle">03</text>
+        <text x="88" y="55" fill="#061A1B" font-size="27" font-weight="760">Live State</text>
+        <text x="32" y="108" fill="#52615E" font-size="20">One live.json records the deck,</text>
+        <text x="32" y="138" fill="#52615E" font-size="20">review, feedback, checks, and phase.</text>
+        <rect x="32" y="164" width="176" height="20" rx="10" fill="#D7E8E4"/>
+      </g>
+
+      <g transform="translate(88 520)">
+        <rect width="430" height="200" rx="30" fill="#F7F2E7"/>
+        <circle cx="46" cy="46" r="24" fill="#061A1B"/>
+        <text x="46" y="53" fill="#EFFF54" font-size="19" font-weight="700" text-anchor="middle">04</text>
+        <text x="88" y="55" fill="#061A1B" font-size="27" font-weight="760">Preview Builder</text>
+        <text x="32" y="108" fill="#52615E" font-size="20">Deterministic assembly turns content</text>
+        <text x="32" y="138" fill="#52615E" font-size="20">and standards into preview.html.</text>
+        <rect x="32" y="164" width="190" height="20" rx="10" fill="#D7E8E4"/>
+      </g>
+
+      <g transform="translate(585 520)">
+        <rect width="430" height="200" rx="30" fill="#F7F2E7"/>
+        <circle cx="46" cy="46" r="24" fill="#061A1B"/>
+        <text x="46" y="53" fill="#EFFF54" font-size="19" font-weight="700" text-anchor="middle">05</text>
+        <text x="88" y="55" fill="#061A1B" font-size="27" font-weight="760">Quality Gate</text>
+        <text x="32" y="108" fill="#52615E" font-size="20">Static checks, browser checks, and one</text>
+        <text x="32" y="138" fill="#52615E" font-size="20">severity-sorted review surface issues.</text>
+        <rect x="32" y="164" width="220" height="20" rx="10" fill="#D7E8E4"/>
+      </g>
+
+      <g transform="translate(1082 520)">
+        <rect width="430" height="200" rx="30" fill="#0B8C76"/>
+        <circle cx="46" cy="46" r="24" fill="#F7F2E7"/>
+        <text x="46" y="53" fill="#0B8C76" font-size="19" font-weight="700" text-anchor="middle">06</text>
+        <text x="88" y="55" fill="#FFFFFF" font-size="27" font-weight="760">Delivery Pack</text>
+        <text x="32" y="108" fill="#D9FFF5" font-size="20">Approval promotes the checked preview</text>
+        <text x="32" y="138" fill="#D9FFF5" font-size="20">and writes HTML, Markdown, and JSON.</text>
+        <rect x="32" y="164" width="200" height="20" rx="10" fill="#086959"/>
+      </g>
+    </g>
+
+    <path d="M518 362H585M1015 362H1082M303 462V520M800 462V520M1297 462V520" stroke="#9EC7BD" stroke-width="4" marker-end="url(#arrow)"/>
+    <text x="800" y="790" fill="#9EC7BD" font-size="19" text-anchor="middle">Main Agent by default · one optional subagent only on explicit request · human approval before delivery</text>
+  </g>
+</svg>
