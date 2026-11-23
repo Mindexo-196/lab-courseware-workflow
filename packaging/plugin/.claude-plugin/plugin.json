@@ -1,0 +1,8 @@
+{
+  "name": "courseware-workflow",
+  "version": "1.0.1",
+  "description": "Main-agent-first Lab HTML courseware workflow.",
+  "author": "Courseware Workflow Contributors",
+  "license": "MIT",
+  "skills": "./skills/"
+}

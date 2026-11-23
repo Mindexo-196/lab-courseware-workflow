@@ -1,0 +1,41 @@
+{
+  "name": "courseware-workflow",
+  "version": "1.0.1",
+  "description": "Main-agent-first Lab HTML courseware workflow with one live.json, direct CST references, review, conversation UI feedback, and delivery.",
+  "author": {
+    "name": "Courseware Workflow Contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "courseware",
+    "html",
+    "education",
+    "workflow",
+    "cst",
+    "visual-review",
+    "dsh",
+    "deepseek-harness"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "课件工作流",
+    "shortDescription": "Main Agent 默认完成的轻量 HTML 课件工作流",
+    "longDescription": "用一份 live.json 管理课件状态，直接关联三份核心 CST，生成交互 HTML，完成一轮基础审查后在对话界面中迭代并由用户批准交付。",
+    "developerName": "Courseware Workflow Contributors",
+    "category": "Education & Research",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "composerIcon": "./assets/composer-icon.svg",
+    "logo": "./assets/logo.svg",
+    "defaultPrompt": [
+      "使用 $courseware-workflow 为当前主题制作一份双语 Lab HTML 课件。",
+      "检查并恢复当前课件工作流任务。"
+    ],
+    "brandColor": "#066B5B",
+    "screenshots": [
+      "./assets/workflow-overview.svg"
+    ]
+  }
+}

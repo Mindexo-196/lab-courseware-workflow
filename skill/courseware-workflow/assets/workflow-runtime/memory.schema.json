@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "courseware-memory-v1.schema.json",
+  "title": "Courseware context memory",
+  "description": "防止对话上下文丢失的轻量传输文件；不得包含 HTML 源码或完整构建状态。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "task_id",
+    "phase",
+    "updated_at",
+    "task",
+    "history",
+    "pages",
+    "content",
+    "usage"
+  ],
+  "properties": {
+    "schema": {"const": "courseware/memory/v1"},
+    "version": {"const": "1.0"},
+    "task_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "phase": {"type": "string", "minLength": 1},
+    "updated_at": {"type": "string", "minLength": 1},
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["request", "objective", "audience", "scope", "delivery"],
+      "properties": {
+        "request": {"type": "string", "minLength": 1},
+        "objective": {"type": "string", "minLength": 1},
+        "audience": {"type": "string", "minLength": 1},
+        "scope": {"type": "string", "minLength": 1},
+        "delivery": {"type": "string", "minLength": 1},
+        "constraints": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "history": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "decisions", "feedback", "open_issues"],
+      "properties": {
+        "summary": {"type": "string"},
+        "decisions": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["at", "action"],
+            "properties": {
+              "at": {"type": "string"},
+              "action": {"type": "string"},
+              "note": {"type": "string"}
+            }
+          }
+        },
+        "feedback": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["at", "decision"],
+            "properties": {
+              "at": {"type": "string"},
+              "decision": {"type": "string"},
+              "notes": {"type": "string"}
+            }
+          }
+        },
+        "open_issues": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "severity", "message"],
+            "properties": {
+              "id": {"type": "string"},
+              "severity": {"type": "string"},
+              "slide_id": {"type": "string"},
+              "message": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["page", "slide_id", "type", "title"],
+        "properties": {
+          "page": {"type": "integer", "minimum": 1},
+          "slide_id": {"type": "string"},
+          "type": {"type": "string"},
+          "title": {"type": "string"},
+          "title_en": {"type": "string"},
+          "interaction": {"type": "string"},
+          "linked_components": {"type": "integer", "minimum": 2},
+          "linked_state": {"type": "string"},
+          "status": {"type": "string"},
+          "selector": {"type": "string"}
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref",
+        "sha256",
+        "slides",
+        "version",
+        "theme",
+        "cst"
+      ],
+      "properties": {
+        "ref": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "slides": {"type": "integer", "minimum": 1},
+        "version": {"type": "string"},
+        "theme": {"const": "lab"},
+        "learning_outcomes": {"type": "integer", "minimum": 0},
+        "sources": {"type": "integer", "minimum": 0},
+        "cst": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["content", "skill", "template"],
+          "properties": {
+            "content": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "skill": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "template": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+          }
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_tokens",
+        "cached_tokens",
+        "output_tokens",
+        "total_tokens",
+        "estimated_cost_cny"
+      ],
+      "properties": {
+        "input_tokens": {"type": "integer", "minimum": 0},
+        "cached_tokens": {"type": "integer", "minimum": 0},
+        "output_tokens": {"type": "integer", "minimum": 0},
+        "total_tokens": {"type": "integer", "minimum": 0},
+        "estimated_cost_cny": {"type": "number", "minimum": 0}
+      }
+    }
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "schema": "agent-skill-package/v1",
+  "name": "courseware-workflow",
+  "version": "1.0.1",
+  "description": "主 Agent 默认完成；单一 live.json；仅按用户要求使用一个子 Agent",
+  "skill_file": "SKILL.md",
+  "license": "MIT",
+  "runtime": "assets/workflow-runtime",
+  "profiles": [
+    "codex",
+    "dsh",
+    "harness",
+    "generic",
+    "claude"
+  ],
+  "compatibility": {
+    "agent_skills": true,
+    "codex": true,
+    "codex_plugin": true,
+    "dsh_skill": true,
+    "deepseek_harness": true,
+    "claude_style": true,
+    "generic_markdown_agents": true
+  },
+  "requirements": {
+    "node": ">=20",
+    "browser": "Chrome or Chromium for visual validation"
+  },
+  "install": "node scripts/install.mjs --target <project> --profile codex|dsh|harness",
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "purpose": "Skill 版本变更记录",
+      "sha256": "2f6cae1c8e2d5108f3b939d55cf3e4a8809331bf8b26beb2cf44be5f92e155f4"
+    },
+    {
+      "path": "LICENSE",
+      "purpose": "MIT 发布许可",
+      "sha256": "3c9d00b9938afc65b25646f98ab2b287947c9b7cbe04e8bed0478a0cc0f49db8"
+    },
+    {
+      "path": "PRIVACY.md",
+      "purpose": "本地运行与隐私说明",
+      "sha256": "0f1fa0f244e26dd9dd45db8240c1e2253274a72add61191dc4f8a5abf87c11b0"
+    },
+    {
+      "path": "README.md",
+      "purpose": "安装、兼容性与使用说明",
+      "sha256": "c71d72803de9a4c5e51cdcbfbff9a8f7626cbef9db34fe96dd5fd1f4aee8ab66"
+    },
+    {
+      "path": "SECURITY.md",
+      "purpose": "安全边界与报告说明",
+      "sha256": "64032cbfc836f3a194c201a945db503477e25494f410374babe365f67bfce72f"
+    },
+    {
+      "path": "SKILL.md",
+      "purpose": "Agent Skill 主入口",
+      "sha256": "43d7415e461787d18f00363c70c2f2748816fd9b9730f9af9a88d4c4d14fb3a0"
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "purpose": "第三方内容许可声明",
+      "sha256": "e22f81369be09d1a1b2f245921007ca375b6a2090f61b7a188732ebfa79a0d67"
+    },
+    {
+      "path": "agents/openai.yaml",
+      "purpose": "Skill 平台元数据",
+      "sha256": "bfe4c69c7adc2c5b3073931077242ad37ba68ba5d297e401844537f2f218a1db"
+    },
+    {
+      "path": "assets/composer-icon.svg",
+      "purpose": "Workflow 运行时资源",
+      "sha256": "928ec83b434b934e163ddf4987f1460cb52756f0ac942b67bb2610a9534bba80"
+    },
+    {
+      "path": "assets/logo.svg",
+      "purpose": "Workflow 运行时资源",
+      "sha256": "8b9845d9527f4d69cbeb1bdb43a6080d5135cf5c0c61e2d11fa93cc0ec88fa47"
+    },
+    {
+      "path": "assets/workflow-overview.svg",
+      "purpose": "Workflow 运行时资源",
+      "sha256": "dbeb6735408e12e7916bf4c84c415aebed137de45282d3054a731913403ea02f"
+    },
+    {
+      "path": "assets/workflow-runtime/CST/CONTENT.md",
+      "purpose": "内容与交付契约",
+      "sha256": "52fae621e954dfb0926f43510f77b634d6934b9f2f88c493b894df20f44bbc3a"
+    },
+    {
+      "path": "assets/workflow-runtime/CST/SKILL.md",
+      "purpose": "Lab 设计与验收规则",
+      "sha256": "cab51c46020da803a394e0467c90da1dcbc8cf2a8b12de68cbab16c2beecec77"
+    },
+    {
+      "path": "assets/workflow-runtime/CST/TEMPLATE.html",
+      "purpose": "HTML 课件骨架",
+      "sha256": "5ea1d03e4a525524f6edaf17d4ae03140518f8cf4f2237d5a701a7a82ba826b6"
+    },
+    {
+      "path": "assets/workflow-runtime/examples/content.json",
+      "purpose": "可运行任务示例",
+      "sha256": "8f596d618e51ba3a20a6f6a7d181d9cfa36846324d5a933b2a9bb051c9b43dde"
+    },
+    {
+      "path": "assets/workflow-runtime/live.schema.json",
+      "purpose": "live.json 数据结构",
+      "sha256": "6d9a12a923f8623f991268b9041c46a6fae02a8f9b61b4154ac9e3e1507682b5"
+    },
+    {
+      "path": "assets/workflow-runtime/memory.schema.json",
+      "purpose": "memory.json 数据结构",
+      "sha256": "c24bb9e4eeaf9059cc73cbd540462610b0679ff4e99e6ab422304da7fbb91d38"
+    },
+    {
+      "path": "assets/workflow-runtime/overrides/lab-v2.css",
+      "purpose": "Lab 主题回归覆盖样式",
+      "sha256": "160711f5d5fd9671ae50a5df2185d1d418dc76d4922bdb64f64ab044c2289ff7"
+    },
+    {
+      "path": "assets/workflow-runtime/scripts/build-content.mjs",
+      "purpose": "Workflow 执行脚本",
+      "sha256": "31d8dd78897565f9fc63d26bd9f6cf587dd01da8c375a30db83cf194f3bcaf73"
+    },
+    {
+      "path": "assets/workflow-runtime/scripts/check-browser.mjs",
+      "purpose": "Workflow 执行脚本",
+      "sha256": "9875c1b60e748efe54334ae496cdc6f29d4e507350c745cde59f50dbb5d2c601"
+    },
+    {
+      "path": "assets/workflow-runtime/scripts/check-static.mjs",
+      "purpose": "Workflow 执行脚本",
+      "sha256": "4ab61fd417dfb1b24d4333c9edc7d97122f30e7771277175c0f21a348f55f9b7"
+    },
+    {
+      "path": "assets/workflow-runtime/scripts/run-task.mjs",
+      "purpose": "Workflow 执行脚本",
+      "sha256": "191d63cdbe48eacaaea86e7f42e89950b38637dcd1b77b80b9fa0a4260e60315"
+    },
+    {
+      "path": "assets/workflow-runtime/workflow.md",
+      "purpose": "轻量工作流契约",
+      "sha256": "3bb3e2016265d921200d693442fe1c92b9569432dca0bc311626166896381253"
+    },
+    {
+      "path": "profiles/claude/CLAUDE.md",
+      "purpose": "Claude 风格项目说明",
+      "sha256": "e2ee45dafe82a0ee0091b84a3cf7baaa78af37f69495f38b3c32dfb600888fd3"
+    },
+    {
+      "path": "profiles/codex/AGENTS.md",
+      "purpose": "Codex 项目级工作流说明",
+      "sha256": "1fc16bda15655816077fc60f86f39377eb0995674ec86a854987480ce0634425"
+    },
+    {
+      "path": "profiles/codex/agents/courseware-generator.toml",
+      "purpose": "Codex 自定义 Agent 配置",
+      "sha256": "186f4314a10549d5a303e27e6b51689aff1bdb514cdabae22a9a40cdfe70173c"
+    },
+    {
+      "path": "profiles/codex/agents/courseware-reviewer.toml",
+      "purpose": "Codex 自定义 Agent 配置",
+      "sha256": "55b9b9bc66621e53973329bb9789472c810012a52a58979e5d6c1a029da5ae9d"
+    },
+    {
+      "path": "profiles/dsh/AGENTS.md",
+      "purpose": "DSH 原生 Skill 接入说明",
+      "sha256": "ffa02ec5f2237cf66d34d84416aa84d918023cc8ab7e91ba427f5ba644f36093"
+    },
+    {
+      "path": "profiles/generic/GENERATOR_AGENT.md",
+      "purpose": "通用 Agent 角色说明",
+      "sha256": "cf93ba2c1d5b19243cb342b45d5b5b4cb6e14efa3a71ba9fd493267edbb6ff4f"
+    },
+    {
+      "path": "profiles/generic/MAIN_AGENT.md",
+      "purpose": "通用 Agent 角色说明",
+      "sha256": "b8069bf9b9adf335a66aaa1e570e0cc969caed0954312b411b27a7f776272d50"
+    },
+    {
+      "path": "profiles/generic/REVIEWER_AGENT.md",
+      "purpose": "通用 Agent 角色说明",
+      "sha256": "92b6f495182133981b68a1271d088ec71ea65cc10755b0af0d270d3bca99d12b"
+    },
+    {
+      "path": "profiles/harness/AGENTS.md",
+      "purpose": "DeepSeek Harness 接入说明",
+      "sha256": "512eb7ba89a01f196b4054d7cb27dbeeb89a266e61ea141959eb258e77a47a11"
+    },
+    {
+      "path": "references/diagram-design.md",
+      "purpose": "按需加载的设计参考",
+      "sha256": "0d81bac6e54ad088ba921ec185eaf158c7fe1bec65d1d2c8fd39f5ce6a51d987"
+    },
+    {
+      "path": "scripts/install.mjs",
+      "purpose": "安装或完整性校验脚本",
+      "sha256": "98fe6c3aea8baa560a6946a77f7dfde9ab4e744afa20fd5d78f15828dd4eba56"
+    },
+    {
+      "path": "scripts/verify-package.mjs",
+      "purpose": "安装或完整性校验脚本",
+      "sha256": "ff460b55bce541599171d1263991b54d5555eb46bdb6f181b3af700d1c9071bc"
+    }
+  ]
+}

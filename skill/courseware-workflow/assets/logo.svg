@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Courseware Workflow">
+  <rect width="512" height="512" rx="112" fill="#061A1B"/>
+  <rect x="72" y="96" width="238" height="318" rx="36" fill="#F7F2E7"/>
+  <rect x="118" y="152" width="146" height="22" rx="11" fill="#066B5B"/>
+  <rect x="118" y="204" width="108" height="18" rx="9" fill="#78A89D"/>
+  <rect x="118" y="252" width="146" height="18" rx="9" fill="#78A89D"/>
+  <rect x="118" y="300" width="86" height="18" rx="9" fill="#78A89D"/>
+  <path d="M310 148h82a48 48 0 0 1 48 48v220a48 48 0 0 1-48 48h-82z" fill="#EFFF54"/>
+  <circle cx="200" cy="370" r="24" fill="#066B5B"/>
+  <path d="m190 370 8 8 15-18" fill="none" stroke="#F7F2E7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M344 246h70M344 306h52M344 366h62" stroke="#061A1B" stroke-width="18" stroke-linecap="round"/>
+</svg>

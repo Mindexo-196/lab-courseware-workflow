@@ -1,0 +1,3715 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-lang="zh" data-theme="lab">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="courseware-theme" content="{{theme}}">
+<title>{{course}} · {{chapter}}</title>
+<!--
+  网页课件骨架 · 版本 3.3
+  配套：SKILL.md（规则）· CONTENT.md（数据）
+  视觉：1920×1080 · 双语切换 · 离线共享运行时 · 无远程依赖
+  当前规则：硬件 3D + 原生体积 CSS 3D · 灰色毛玻璃常驻 · 多视图采用 CLOCK LAB 结构
+  装配标记在装配后必须全部消失：
+    屏型标记                              位于屏型片段模板内
+    body / body:left / body:right          主体注入点
+    body:visual                            封面视觉注入点
+    条件标记                               变量为空则整块删除
+    双花括号变量                            单值替换
+  约定：增删屏幕后必须重编号页码与逐屏注释。
+-->
+<style>
+/* ═══ L1 令牌 ═══ */
+:root {
+  --w:1920px; --h:1080px;
+  --ink:#06080D; --ink2:#0A0E16;
+  --fg:#F2EFE7; --muted:#AAB3C2; --dim:#7C8697;
+  --panel:rgba(14,20,32,.74); --panel2:rgba(18,26,40,.92);
+  --line:rgba(242,239,231,.12); --line2:rgba(242,239,231,.22);
+  --amber:#FFB454; --amber2:#FFD08A; --coral:#FF7A66;
+  --cyan:#7DD3FC; --violet:#B49CFF; --mint:#7DE2C3;
+  --grad-warm:linear-gradient(100deg,var(--amber),var(--coral));
+  --grad-cool:linear-gradient(100deg,var(--cyan),var(--violet));
+  --mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
+  --sans: "MiSans", "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
+  --serif: "Noto Serif SC", "Songti SC", serif;
+  --font-scale: 1.08;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --ease-io:cubic-bezier(.65,.05,.36,1);
+  --ease-soft:cubic-bezier(.33,0,.2,1);
+  --type-meta:calc(12px * var(--font-scale));
+  --type-eyebrow:calc(13px * var(--font-scale));
+  --type-ui:calc(14px * var(--font-scale));
+  --type-caption:calc(15px * var(--font-scale));
+  --type-copy:calc(16px * var(--font-scale));
+  --type-table:calc(17px * var(--font-scale));
+  --type-card-body:calc(19px * var(--font-scale));
+  --type-body:calc(22px * var(--font-scale));
+  --type-lead-compact:calc(21px * var(--font-scale));
+  --type-lead:calc(26px * var(--font-scale));
+  --type-cover-sub:calc(27px * var(--font-scale));
+  --type-metric:calc(30px * var(--font-scale));
+  --type-panel-title:calc(32px * var(--font-scale));
+  --type-section:calc(34px * var(--font-scale));
+  --type-readout:calc(18px * var(--font-scale));
+  --type-page-title-compact:calc(58px * var(--font-scale));
+  --type-page-title:calc(68px * var(--font-scale));
+  --type-cover-title-en:calc(130px * var(--font-scale));
+  --type-cover-title:calc(188px * var(--font-scale));
+  --type-cover-title-long:calc(84px * var(--font-scale));
+  --type-cover-title-long-en:calc(58px * var(--font-scale));
+}
+
+/* ═══ L2 原子 ═══ */
+* { box-sizing:border-box; }
+[hidden] { display:none !important; }
+html,body { height:100%; }
+body {
+  margin:0; overflow:hidden; color:var(--fg); background:#020408;
+  font-family:var(--sans); text-rendering:optimizeLegibility;
+}
+button,input { font:inherit; color:inherit; }
+button { cursor:pointer; }
+button:focus-visible,input:focus-visible { outline:2px solid var(--amber); outline-offset:3px; }
+::selection { color:#fff; background:rgba(255,180,84,.35); }
+h1,h2,h3,h4,p,dl,dd { margin:0; }
+.zh,.en { display:inline; }
+h1.zh,h1.en,h2.zh,h2.en,h3.zh,h3.en,h4.zh,h4.en,p.zh,p.en,div.zh,div.en { display:block; }
+html[data-lang="zh"] .en { display:none; }
+html[data-lang="en"] .zh { display:none; }
+
+#app { position:fixed; inset:0; overflow:hidden; }
+#stage {
+  position:absolute; left:50%; top:50%; width:var(--w); height:var(--h);
+  overflow:hidden; isolation:isolate; background:var(--ink);
+  transform-origin:center center;
+  box-shadow:0 50px 160px rgba(0,0,0,.78);
+}
+#stage:not(:has(.slide))::after {
+  content:"骨架未装配：按 CONTENT.md 的屏级清单，把屏型块填入 #deck";
+  position:absolute; inset:0; z-index:20; display:grid; place-items:center;
+  font-family:var(--mono); font-size:16px; color:var(--dim); letter-spacing:.05em;
+}
+.bg,.vig {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+}
+.bg {
+  background:
+    radial-gradient(980px 640px at 84% 4%,rgba(255,180,84,.12),transparent 62%),
+    radial-gradient(900px 720px at 4% 96%,rgba(125,211,252,.09),transparent 64%),
+    radial-gradient(700px 520px at 54% 52%,rgba(180,156,255,.05),transparent 70%),
+    linear-gradient(158deg,#080B12 0%,var(--ink) 52%,#05070B 100%);
+}
+.bg::after {
+  content:""; position:absolute; inset:0; opacity:.65;
+  background-image:
+    linear-gradient(rgba(242,239,231,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(242,239,231,.035) 1px,transparent 1px);
+  background-size:96px 96px;
+  -webkit-mask-image:radial-gradient(ellipse at 50% 42%,#000 0%,rgba(0,0,0,.5) 55%,transparent 82%);
+  mask-image:radial-gradient(ellipse at 50% 42%,#000 0%,rgba(0,0,0,.5) 55%,transparent 82%);
+}
+.vig { z-index:2; box-shadow:inset 0 0 240px 90px rgba(0,0,0,.55); }
+.corner {
+  position:absolute; z-index:30; width:18px; height:18px;
+  border:0 solid rgba(242,239,231,.55); opacity:.3; pointer-events:none;
+}
+.corner.tl { top:20px; left:20px; border-top-width:1px; border-left-width:1px; }
+.corner.tr { top:20px; right:20px; border-top-width:1px; border-right-width:1px; }
+.corner.bl { bottom:20px; left:20px; border-bottom-width:1px; border-left-width:1px; }
+.corner.br { bottom:20px; right:20px; border-bottom-width:1px; border-right-width:1px; }
+
+/* ═══ L3 外壳 ═══ */
+.chrome {
+  position:absolute; left:0; right:0; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 54px; pointer-events:none;
+}
+.chrome.top { top:28px; }
+.chrome.bottom { bottom:24px; }
+.chrome-left,.chrome-right { display:flex; align-items:center; gap:14px; pointer-events:auto; }
+.brand {
+  display:flex; align-items:center; gap:12px; white-space:nowrap;
+  color:var(--muted); font-family:var(--mono); font-size:13px;
+  letter-spacing:.16em; text-transform:uppercase;
+}
+.brand-mark { width:22px; height:22px; flex:0 0 auto; }
+.top-note {
+  color:var(--dim); font-family:var(--mono); font-size:12px;
+  letter-spacing:.16em; text-transform:uppercase; white-space:nowrap;
+}
+.tools,.nav { display:flex; align-items:center; gap:9px; pointer-events:auto; }
+.tool,.ctl {
+  min-width:38px; height:38px; padding:0 11px; border:1px solid var(--line);
+  border-radius:9px; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  color:var(--muted); background:rgba(242,239,231,.03);
+  transition:border-color .25s,color .25s,background .25s;
+}
+.tool:hover,.ctl:hover {
+  color:var(--amber); border-color:rgba(255,180,84,.6);
+  background:rgba(255,180,84,.06);
+}
+.tool svg,.ctl svg { width:16px; height:16px; display:block; }
+.tool.lang { min-width:58px; color:var(--fg); }
+.scene {
+  display:flex; align-items:center; gap:10px; min-width:220px;
+  color:var(--muted); font-family:var(--mono); font-size:12px;
+  letter-spacing:.14em; text-transform:uppercase; white-space:nowrap;
+}
+.scene #sceneNo { color:var(--amber); }
+.scene .sep { color:var(--dim); }
+.progress-wrap { flex:1 1 auto; min-width:0; margin:0 44px; }
+.bar { position:relative; height:2px; overflow:hidden; background:rgba(242,239,231,.12); }
+.bar i {
+  position:absolute; inset:0 auto 0 0; width:0; background:var(--grad-warm);
+  transition:width .45s var(--ease);
+}
+.ticks { display:flex; align-items:center; gap:6px; height:14px; margin-top:7px; }
+.tick {
+  position:relative; width:17px; height:14px; flex:0 0 auto;
+  padding:0; border:0; background:none;
+}
+.tick::before {
+  content:""; position:absolute; left:0; right:0; top:6px; height:2px;
+  background:rgba(242,239,231,.16); transition:background .25s,transform .25s;
+}
+.tick:hover::before { background:rgba(255,180,84,.65); }
+.tick.is-on::before { background:var(--amber); transform:scaleY(1.5); }
+.ctl:disabled { opacity:.35; pointer-events:none; }
+.ctl .i-pause { display:none; }
+.ctl.is-playing .i-play { display:none; }
+.ctl.is-playing .i-pause { display:block; }
+.count {
+  min-width:82px; margin-left:8px; color:var(--dim); white-space:nowrap;
+  font-family:var(--mono); font-size:14px; letter-spacing:.08em;
+}
+.count b { color:var(--fg); font-weight:500; }
+
+/* ═══ L4 屏幕与入场 ═══ */
+#deck { position:absolute; inset:0; z-index:10; }
+.slide {
+  position:absolute; inset:0; padding:96px 104px 118px;
+  display:flex; flex-direction:column; opacity:0; visibility:hidden; pointer-events:none;
+  transform:scale(.995);
+  transition:opacity .52s var(--ease-soft),visibility 0s linear .52s,transform .9s var(--ease);
+}
+.slide.on {
+  opacity:1; visibility:visible; pointer-events:auto; transform:scale(1);
+  transition:opacity .58s var(--ease),visibility 0s,transform 1s var(--ease);
+}
+.enter { opacity:0; transform:translateY(24px); }
+.slide.on .enter { animation:rise .78s var(--ease) both; }
+.slide.on .blur { animation-name:riseBlur; }
+.d1 { animation-delay:0ms; }
+.d2 { animation-delay:80ms; }
+.d3 { animation-delay:180ms; }
+.d4 { animation-delay:280ms; }
+.d5 { animation-delay:380ms; }
+.d6 { animation-delay:480ms; }
+@keyframes rise {
+  from { opacity:0; transform:translateY(24px); }
+  to { opacity:1; transform:none; }
+}
+@keyframes riseBlur {
+  from { opacity:0; transform:translateY(18px); filter:blur(8px); }
+  to { opacity:1; transform:none; filter:blur(0); }
+}
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(18px); }
+  to { opacity:1; transform:none; }
+}
+.slide-head { flex:0 0 auto; margin-bottom:30px; }
+.eyebrow {
+  display:flex; align-items:center; gap:12px; margin:0 0 14px;
+  color:var(--amber); font-family:var(--mono); font-size:var(--type-eyebrow);
+  letter-spacing:.2em; text-transform:uppercase;
+}
+.eyebrow::before { content:""; width:26px; height:1px; background:var(--amber); opacity:.8; }
+.h2 { font-family:var(--serif); font-size:var(--type-page-title); line-height:1.12; letter-spacing:-.015em; }
+.h3 { font-family:var(--serif); font-size:var(--type-section); line-height:1.3; }
+.lead { margin-top:16px; max-width:1260px; color:#C8CFDA; font-size:var(--type-lead); line-height:1.58; }
+.slide-head.compact { margin-bottom:22px; }
+.slide-head.compact .h2 { font-size:var(--type-page-title-compact); }
+.slide-head.compact .lead { margin-top:10px; max-width:1180px; font-size:var(--type-lead-compact); }
+.body-area {
+  position:relative; flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:18px;
+  color:var(--muted); font-size:var(--type-body); line-height:1.62;
+}
+.body-area > .grid-2,.body-area > .grid-3,.body-area > .split,
+.body-area > .ix-table-wrap,.body-area > .svg-scene,.body-area > .wx {
+  flex:1 1 auto;
+}
+.body-area .card { min-height:170px; display:flex; flex-direction:column; justify-content:center; }
+.body-area .panel-body { flex:1 1 auto; }
+.rule {
+  height:1px; margin:22px 0 0; border:0;
+  background:linear-gradient(90deg,rgba(255,180,84,.8),rgba(242,239,231,.14) 46%,transparent);
+}
+.note { margin:auto 0 0; padding-top:10px; color:var(--dim); font-size:var(--type-ui); line-height:1.6; }
+.foot { display:none; }
+
+/* ═══ L5 文字与内容构件 ═══ */
+.card {
+  position:relative; padding:20px 22px; border:1px solid var(--line); border-radius:16px;
+  background:linear-gradient(180deg,rgba(18,26,40,.82),rgba(11,16,26,.82));
+}
+.card h4 { margin-bottom:10px; color:var(--amber); font-family:var(--mono); font-size:var(--type-caption); letter-spacing:.08em; }
+.card p,.card li { color:var(--muted); font-size:var(--type-card-body); line-height:1.58; }
+.panel {
+  border:1px solid var(--line); border-radius:18px; background:var(--panel);
+  backdrop-filter:blur(7px); overflow:hidden;
+}
+.panel-head {
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:14px 20px; border-bottom:1px solid var(--line);
+  color:var(--muted); font-family:var(--mono); font-size:12px;
+  letter-spacing:.16em; text-transform:uppercase;
+}
+.panel-body { padding:22px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.grid-2 > *,.grid-3 > * { min-height:0; }
+.split {
+  flex:1 1 auto; min-height:0; display:grid;
+  grid-template-columns:1.04fr .96fr; gap:28px;
+}
+.split .col { min-width:0; min-height:0; display:flex; flex-direction:column; justify-content:center; gap:16px; }
+.split .col > .wx,.split .col > .panel,.split .col > .grid-2,.split .col > .grid-3 { min-height:420px; }
+.split .col > .grid-2 { grid-auto-rows:minmax(0,1fr); }
+.split .col > .grid-3 { grid-auto-rows:minmax(0,1fr); }
+.split .card { min-height:0; display:flex; flex-direction:column; justify-content:center; }
+.split .wx { display:flex; flex-direction:column; }
+.split .wx-body { flex:1 1 auto; display:flex; align-items:center; }
+.tbl { width:100%; border-collapse:collapse; }
+.tbl caption {
+  padding-bottom:10px; color:var(--dim); text-align:left;
+  font-family:var(--mono); font-size:12px; letter-spacing:.06em;
+}
+.tbl th {
+  padding:13px 12px; color:var(--muted); font-family:var(--mono); font-size:var(--type-table);
+  font-weight:500; text-align:left; white-space:nowrap;
+  border-bottom:1px solid var(--line2);
+}
+.tbl td {
+  padding:12px; color:var(--fg); font-size:var(--type-table); vertical-align:top;
+  border-bottom:1px solid var(--line);
+}
+.tbl tr:last-child td { border-bottom:0; }
+.tbl .num { text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; }
+.slide.on .tbl tbody tr { animation:rowIn .5s var(--ease-soft) both; }
+.slide.on .tbl tbody tr:nth-child(2) { animation-delay:80ms; }
+.slide.on .tbl tbody tr:nth-child(3) { animation-delay:140ms; }
+.slide.on .tbl tbody tr:nth-child(4) { animation-delay:200ms; }
+.slide.on .tbl tbody tr:nth-child(5) { animation-delay:260ms; }
+@keyframes rowIn { from { opacity:.45; } to { opacity:1; } }
+.code {
+  margin:0; padding:14px 16px; overflow:auto; white-space:pre;
+  border:1px solid var(--line); border-radius:9px; background:rgba(5,8,14,.82);
+  color:var(--fg); font-family:var(--mono); font-size:14px; line-height:1.62;
+}
+.chain { display:flex; align-items:stretch; gap:10px; flex-wrap:wrap; }
+.chain-step {
+  flex:1 1 0; min-width:150px; padding:16px; border:1px solid var(--line);
+  border-radius:14px; background:rgba(242,239,231,.025);
+}
+.chain-step b { display:block; color:var(--amber); font-family:var(--mono); font-size:12px; letter-spacing:.1em; }
+.chain-step span { display:block; margin-top:8px; color:var(--muted); font-size:var(--type-caption); line-height:1.5; }
+.chain-arrow { align-self:center; color:var(--amber); font-family:var(--mono); font-size:20px; }
+.badge {
+  display:inline-flex; align-items:center; gap:7px; height:26px; padding:0 10px;
+  border:1px solid var(--line); border-radius:999px; color:var(--muted);
+  font-family:var(--mono); font-size:12px; letter-spacing:.1em; text-transform:uppercase;
+}
+.badge::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--amber); }
+.badge.ok { color:var(--mint); border-color:rgba(125,226,195,.35); }
+.badge.ok::before { background:var(--mint); }
+.badge.warn { color:var(--coral); border-color:rgba(255,122,102,.35); }
+.badge.warn::before { background:var(--coral); }
+.chip {
+  display:inline-flex; align-items:center; gap:8px; padding:8px 12px;
+  border:1px solid var(--line); border-radius:8px; background:rgba(242,239,231,.04);
+  color:var(--muted); font-family:var(--mono); font-size:13px;
+}
+.chip b { color:var(--fg); font-weight:500; }
+.kbd {
+  display:inline-grid; place-items:center; min-width:28px; height:26px; padding:0 7px;
+  border:1px solid var(--line2); border-bottom-width:2px; border-radius:6px;
+  background:rgba(242,239,231,.05); color:var(--fg); font-family:var(--mono); font-size:12px;
+}
+.metric b { display:block; color:var(--fg); font-family:var(--mono); font-size:32px; font-weight:500; }
+.metric span { color:var(--dim); font-family:var(--mono); font-size:12px; letter-spacing:.1em; }
+svg[role="img"] { display:block; max-width:100%; }
+.sv-axis { stroke:var(--line2); stroke-width:1.5; }
+.sv-path { stroke:var(--amber); stroke-width:2.2; fill:none; }
+.sv-label { fill:var(--dim); font-family:var(--mono); font-size:12px; }
+
+/* ═══ L6 封面 ═══ */
+.cover { justify-content:center; }
+.cover-grid {
+  flex:1 1 auto; min-height:0; display:grid;
+  grid-template-columns:1.04fr .96fr; gap:24px; align-items:center;
+}
+.cover-copy { padding-left:6px; }
+.cover .eyebrow { margin-bottom:24px; }
+.cover-title { font-family:var(--serif); line-height:.98; letter-spacing:-.03em; }
+.cover-title .zh { display:block; font-size:var(--type-cover-title); }
+.cover-title .en { display:block; font-size:var(--type-cover-title-en); line-height:.94; font-style:italic; }
+.cover-title.is-long .zh { font-size:var(--type-cover-title-long); }
+.cover-title.is-long .en { font-size:var(--type-cover-title-long-en); }
+.cover-sub {
+  max-width:780px; margin-top:30px; color:#C2CAD6;
+  font-size:var(--type-cover-sub); line-height:1.55;
+}
+.cover-sub .zh,.cover-sub .en { display:block; }
+.cover-meta {
+  display:grid; grid-template-columns:auto 1fr; gap:11px 22px;
+  max-width:780px; margin-top:38px; padding-top:22px; border-top:1px solid var(--line);
+}
+.cover-meta dt {
+  padding-top:3px; color:var(--dim); font-family:var(--mono);
+  font-size:var(--type-meta); letter-spacing:.14em; text-transform:uppercase;
+}
+.cover-meta dd { color:var(--fg); font-size:var(--type-copy); }
+.cover-hint {
+  display:flex; align-items:center; gap:12px; margin-top:30px;
+  color:var(--dim); font-family:var(--mono); font-size:12px; letter-spacing:.1em;
+}
+.cover-visual {
+  min-height:0; height:100%; display:grid; place-items:center;
+  border:1px solid rgba(242,239,231,.06); border-radius:20px;
+  background:
+    radial-gradient(360px 300px at 50% 48%,rgba(255,180,84,.07),transparent 70%),
+    rgba(242,239,231,.012);
+}
+.cover-visual svg { width:100%; height:100%; max-height:780px; }
+
+/* ═══ L7 交互组件 ═══ */
+.wx {
+  position:relative; margin-top:6px; overflow:hidden;
+  min-height:0; display:flex; flex-direction:column;
+  border:1px solid var(--line); border-radius:18px; background:var(--panel);
+}
+.wx-bar {
+  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
+  padding:13px 20px; border-bottom:1px solid var(--line);
+}
+.wx-t { color:var(--muted); font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; }
+.wx-v { color:var(--amber); font-family:var(--mono); font-size:var(--type-readout); }
+.wx-body { flex:1 1 auto; min-height:0; padding:20px 24px; }
+.wx-meta { margin-top:12px; color:var(--dim); font-family:var(--mono); font-size:14px; line-height:1.5; }
+.bits { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.bit {
+  width:38px; height:48px; display:grid; place-items:center;
+  border:1px solid var(--line); border-radius:7px; background:var(--panel2);
+  color:var(--fg); font-family:var(--mono); font-size:var(--type-table); cursor:pointer; user-select:none;
+}
+.bit.on { color:#1D1407; border-color:var(--amber); background:var(--amber); }
+.bits .gap { width:10px; }
+.btn {
+  height:40px; padding:0 16px; border:1px solid var(--line2); border-radius:9px;
+  background:rgba(242,239,231,.04); color:var(--fg);
+  font-family:var(--mono); font-size:13px; letter-spacing:.06em;
+}
+.btn:hover { color:var(--amber); border-color:rgba(255,180,84,.6); }
+.btn.pri { color:#1D1407; border-color:var(--amber); background:var(--amber); font-weight:600; }
+.quiz { flex:1; display:flex; flex-direction:column; gap:12px; }
+.quiz-q {
+  flex:1 1 0; display:flex; flex-wrap:wrap; align-content:center;
+  padding:16px; border:1px solid var(--line); border-radius:14px;
+  background:rgba(242,239,231,.025);
+}
+.quiz-q p { flex:1 0 100%; margin-bottom:10px; color:var(--fg); font-size:var(--type-table); line-height:1.5; }
+.opt {
+  margin:0 8px 8px 0; padding:8px 13px; border:1px solid var(--line);
+  border-radius:9px; background:transparent; color:var(--muted);
+  font-family:var(--mono); font-size:13px;
+}
+.opt:hover { color:var(--amber); border-color:rgba(255,180,84,.55); }
+.opt.ok { color:var(--mint); border-color:var(--mint); }
+.opt.bad { color:var(--coral); border-color:var(--coral); }
+.why { display:none; flex:1 0 100%; margin-top:10px; color:var(--dim); font-size:14px; line-height:1.6; }
+.why.show { display:block; }
+.quiz-q .quiz-hint { margin-top:2px; }
+.cw-slider { display:grid; grid-template-columns:1fr auto; gap:14px 22px; align-items:center; }
+.cw-range { width:100%; accent-color:var(--amber); }
+.cw-slider output { color:var(--amber); font-family:var(--mono); font-size:28px; }
+.cw-slider .wx-meta { grid-column:1 / -1; }
+
+/* ═══ L7B 交互表格 / 矢量图 / 3D ═══ */
+.ix-table-wrap {
+  flex:1 1 auto; min-height:0; display:grid;
+  grid-template-columns:minmax(0,1.45fr) minmax(320px,.55fr); gap:0 !important;
+  padding:12px; overflow:hidden;
+  border:1px solid var(--line2); border-radius:14px;
+  background:var(--glass);
+  box-shadow:0 10px 30px rgba(35,78,63,.08);
+}
+.ix-table-wrap > .table-scroll {
+  padding-right:18px;
+}
+.ix-table-wrap > .ix-detail {
+  padding:20px 22px;
+  border:0; border-left:1px solid var(--line); border-radius:0;
+  background:rgba(255,255,255,.08);
+  box-shadow:none;
+}
+.table-scroll {
+  min-width:0; min-height:0; display:flex; flex-direction:column; overflow:hidden;
+}
+.table-toolbar {
+  display:flex; align-items:center; gap:7px; flex:0 0 auto; min-height:38px;
+  padding:0 0 9px; color:var(--dim);
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em;
+}
+.table-toolbar button,
+.svg-toolbar button,
+.quiz-hint {
+  min-height:30px; padding:0 10px; border:1px solid var(--line2);
+  border-radius:8px; color:var(--muted); background:var(--glass-control);
+  font-family:var(--mono); font-size:11px;
+}
+.table-toolbar button[aria-pressed="true"],
+.svg-toolbar button[aria-pressed="true"],
+.quiz-hint[aria-pressed="true"] {
+  color:var(--fg); border-color:var(--fg); background:var(--glass-active);
+}
+.svg-toolbar {
+  display:flex; align-items:center; gap:7px; margin-top:12px;
+}
+.svg-scene[data-view="focus"] [data-svg-node]:not(.is-on) {
+  opacity:.16 !important;
+}
+.ix-table {
+  width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums;
+}
+.ix-table th,.ix-table td {
+  padding:14px 16px; border-bottom:1px solid var(--line);
+  text-align:left; font-size:var(--type-table);
+}
+.ix-table th {
+  color:var(--dim); font-family:var(--mono); font-size:13px;
+  letter-spacing:.1em; text-transform:uppercase;
+}
+.ix-table tbody tr {
+  cursor:pointer; transition:background .25s var(--ease-soft),color .25s;
+}
+.ix-table tbody tr:hover,.ix-table tbody tr.is-on {
+  background:rgba(255,180,84,.08);
+  box-shadow:inset 3px 0 0 var(--amber);
+}
+.ix-table tbody tr:focus-visible {
+  outline:2px solid var(--amber); outline-offset:-2px;
+}
+.ix-table .num,.ix-table output { color:var(--fg); font-family:var(--mono); }
+.ix-detail {
+  min-height:280px; padding:24px; border:1px solid var(--line);
+  border-radius:16px; background:rgba(242,239,231,.025);
+}
+.ix-detail-kicker {
+  color:var(--amber); font-family:var(--mono); font-size:12px;
+  letter-spacing:.14em; text-transform:uppercase;
+}
+.ix-detail h3 { margin:14px 0 12px; font-family:var(--serif); font-size:var(--type-panel-title); line-height:1.25; }
+.ix-detail p { color:var(--muted); font-size:var(--type-card-body); line-height:1.65; }
+.ix-detail .metric { margin-top:22px; }
+
+.ix-svg {
+  width:100%; height:100%; min-width:0; min-height:0; display:grid; place-items:center;
+  border:1px solid var(--line); border-radius:18px; background:var(--panel);
+  overflow:hidden;
+}
+.ix-svg svg { width:100%; max-height:560px; }
+.ix-svg [data-svg-node] {
+  cursor:pointer; transition:none; pointer-events:visiblePainted;
+}
+.ix-svg [data-svg-node]:focus,
+.ix-svg [data-svg-node]:focus-visible { outline:none; }
+.ix-svg [data-svg-node]:hover { filter:none; }
+.ix-svg [data-svg-node].is-on {
+  filter:none;
+}
+[data-terminal-pane] {
+  min-width:0; min-height:0; max-height:100%; overflow:hidden;
+}
+[data-terminal-scroll] {
+  min-width:0; min-height:0; overflow-x:hidden; overflow-y:auto;
+  overscroll-behavior:contain; scrollbar-gutter:stable;
+}
+[data-terminal-fixed] {
+  position:relative; z-index:2;
+}
+.svg-scene { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; min-height:0; }
+.svg-scene .ix-detail { display:flex; flex-direction:column; justify-content:center; }
+
+.three-shell {
+  position:relative; flex:1 1 auto; min-height:460px; overflow:hidden;
+  border:1px solid var(--line); border-radius:18px;
+  background:
+    radial-gradient(500px 360px at 50% 48%,rgba(255,180,84,.08),transparent 70%),
+    rgba(8,12,20,.72);
+}
+.three-canvas {
+  display:block; width:100%; height:100%; min-height:460px;
+  cursor:grab; touch-action:none;
+}
+.three-canvas:active { cursor:grabbing; }
+.three-toolbar {
+  position:absolute; left:18px; right:18px; top:16px; z-index:2;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  pointer-events:none;
+}
+.three-toolbar > * { pointer-events:auto; }
+.three-status {
+  margin:0; padding:9px 12px; border:1px solid var(--line);
+  border-radius:9px; background:rgba(6,8,13,.72);
+  color:var(--muted); font-family:var(--mono); font-size:12px;
+}
+.three-help {
+  position:absolute; right:22px; bottom:58px; z-index:2;
+  padding:10px 14px; border-radius:10px; background:rgba(6,8,13,.78);
+  color:var(--dim); font-size:13px;
+}
+.three-fallback {
+  position:absolute; inset:0; display:grid; place-items:center; padding:40px;
+  color:var(--muted); text-align:center; font-size:18px; line-height:1.65;
+}
+.three-shell[data-three-ready="true"] .three-fallback { display:none; }
+
+/* ═══ L7D 多视图实验组件 ═══ */
+.lab-btn {
+  min-width:44px; height:36px; padding:0 13px; border:1px solid var(--line2);
+  border-radius:9px; background:rgba(255,255,255,.06); color:var(--fg);
+  font-family:var(--mono); font-size:13px;
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),background .3s,border-color .3s;
+}
+.lab-btn:hover { border-color:var(--amber); }
+.lab-btn:active { transform:scale(.96); }
+.lab-btn[aria-pressed="true"] {
+  color:var(--ink); background:var(--amber); border-color:var(--amber);
+}
+.clock-lab {
+  height:100%; min-height:0; display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto; gap:14px;
+}
+.clock-toolbar {
+  display:grid; grid-template-columns:minmax(250px,.8fr) minmax(360px,1.45fr) minmax(176px,.55fr);
+  align-items:center; gap:18px; padding:12px 16px;
+  border:1px solid var(--line); border-radius:14px;
+  background:rgba(210,216,213,.62); backdrop-filter:blur(18px);
+}
+.clock-presets,.clock-workload { display:flex; align-items:center; gap:7px; }
+.clock-main {
+  min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 330px;
+  gap:14px;
+}
+.clock-scope {
+  min-height:0; display:grid; grid-template-rows:auto 1fr;
+  border:1px solid var(--line); border-radius:16px;
+  background:rgba(221,225,223,.72); backdrop-filter:blur(18px);
+  overflow:hidden;
+}
+.clock-scope-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 15px; border-bottom:1px solid var(--line);
+  color:var(--dim); font-family:var(--mono); font-size:12px;
+  letter-spacing:.11em; text-transform:uppercase;
+}
+.clock-wave { width:100%; height:100%; min-height:260px; padding:8px 16px 12px; }
+.clock-wave .grid { stroke:var(--line); stroke-width:1; }
+.clock-wave-line {
+  fill:none; stroke:var(--fg); stroke-width:3; stroke-linejoin:round;
+  stroke-linecap:round;
+}
+.clock-wave-dot { fill:var(--amber); }
+.clock-scan {
+  stroke:var(--amber); stroke-width:1.5; stroke-dasharray:4 9;
+  opacity:.72; animation:clockScan 3.6s linear infinite;
+}
+@keyframes clockScan { from { transform:translateX(0); } to { transform:translateX(556px); } }
+.clock-side { min-height:0; display:grid; grid-template-rows:repeat(3,1fr); gap:10px; }
+.clock-stat {
+  display:flex; flex-direction:column; justify-content:center;
+  padding:14px 16px; border:1px solid var(--line); border-radius:14px;
+  background:rgba(216,220,218,.66); backdrop-filter:blur(16px);
+}
+.clock-stat .label {
+  color:var(--dim); font-family:var(--mono); font-size:12px;
+  letter-spacing:.12em; text-transform:uppercase;
+}
+.clock-stat b { margin-top:7px; color:var(--fg); font-family:var(--mono); font-size:var(--type-metric); font-weight:500; }
+.clock-stat span { margin-top:5px; color:var(--muted); font-size:var(--type-ui); }
+.clock-caption {
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:9px 14px; border-left:2px solid var(--amber);
+  color:var(--muted); font-size:var(--type-caption);
+}
+.clock-caption code { color:var(--fg); font-family:var(--mono); font-size:14px; }
+
+/* ═══ L7E 算法状态机实验台 ═══ */
+.algo-lab {
+  position:relative; flex:1 1 auto; min-height:0; display:grid;
+  grid-template-rows:auto auto minmax(0,1fr) auto; gap:12px;
+}
+.body-area > .algo-lab { height:100%; }
+.algo-bar,
+.algo-toolbar,
+.algo-stage,
+.algo-stat,
+.algo-footer {
+  border:1px solid var(--line);
+  background:var(--glass);
+  backdrop-filter:blur(16px) saturate(.9);
+}
+.algo-bar {
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  min-height:48px; padding:10px 16px; border-radius:14px;
+}
+.algo-title {
+  color:var(--muted); font-family:var(--mono); font-size:12px;
+  letter-spacing:.14em; text-transform:uppercase;
+}
+.algo-head {
+  color:var(--fg); font-family:var(--mono); font-size:16px; white-space:nowrap;
+}
+.algo-toolbar {
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  min-height:54px; padding:9px 12px; border-radius:14px;
+}
+.algo-controls { display:flex; align-items:center; flex-wrap:wrap; gap:7px; }
+.algo-controls[hidden] { display:none; }
+.algo-control-label {
+  color:var(--dim); font-family:var(--mono); font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase;
+}
+.algo-btn {
+  min-width:42px; height:34px; padding:0 12px; border:1px solid var(--line2);
+  border-radius:9px; color:var(--fg); background:var(--glass-control);
+  font-family:var(--mono); font-size:12px;
+  transition:transform .25s var(--ease-soft),background .25s,border-color .25s;
+}
+.algo-btn:hover { border-color:var(--amber); background:var(--glass-strong); }
+.algo-btn:active { transform:scale(.96); }
+.algo-btn[aria-pressed="true"] {
+  border-color:var(--fg); background:var(--glass-active);
+  box-shadow:inset 0 0 0 1px rgba(16,37,31,.2);
+}
+.algo-btn:disabled { opacity:.38; pointer-events:none; }
+.algo-range-wrap {
+  display:flex; align-items:center; gap:9px; min-width:250px;
+  color:var(--dim); font-family:var(--mono); font-size:12px;
+}
+.algo-range { width:150px; accent-color:var(--amber); }
+.algo-speed-wrap {
+  display:flex; align-items:center; gap:8px; min-height:34px; padding:0 9px;
+  border:1px solid var(--line2); border-radius:9px; background:var(--glass-control);
+  color:var(--muted); font-family:var(--mono); font-size:11px;
+}
+.algo-speed { width:112px; accent-color:var(--amber); }
+.algo-speed-value { min-width:48px; color:var(--fg); text-align:right; }
+.algo-speed-delay { min-width:58px; color:var(--dim); text-align:right; }
+.algo-main {
+  min-height:0; display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:12px;
+}
+.algo-stage {
+  position:relative; min-height:0; overflow:hidden; border-radius:14px;
+  display:grid; place-items:center;
+}
+.algo-graphic { display:block; width:100%; height:100%; min-height:330px; }
+.algo-graphic text { font-family:var(--mono); }
+.algo-rect {
+  fill:var(--glass-soft); stroke:none; transition:none; animation:none; transform:none;
+}
+.algo-rect.is-compare { fill:var(--amber); }
+.algo-rect.is-fixed { fill:var(--glass-active); }
+.algo-rect.is-out { fill:var(--dim); }
+.algo-rect.is-found { fill:var(--mint); }
+.algo-rect.is-min { fill:var(--cyan); }
+.algo-rect.is-key { fill:var(--violet); }
+.algo-rect.is-pivot { fill:var(--coral); }
+.algo-cell {
+  fill:var(--glass-soft); stroke:none; transition:none; animation:none; transform:none;
+}
+.algo-cell.is-compare {
+  fill:var(--amber);
+}
+.algo-cell.is-found {
+  fill:var(--mint);
+}
+.algo-cell.is-out { fill:var(--dim); }
+.algo-cell-value { fill:var(--fg); font-size:21px; font-weight:600; text-anchor:middle; }
+.algo-cell-index { fill:var(--dim); font-size:11px; text-anchor:middle; }
+.algo-range-line { stroke:var(--amber); stroke-width:2; fill:none; }
+.algo-range-label {
+  fill:var(--muted); font-family:var(--mono); font-size:11px;
+  letter-spacing:.06em; text-anchor:middle;
+}
+.algo-cipher-cell {
+  fill:var(--glass-soft); stroke:none; transition:none; animation:none; transform:none;
+}
+.algo-cipher-cell.is-on {
+  fill:var(--amber);
+}
+.algo-cipher-cell.is-done { fill:var(--glass-active); }
+.algo-cipher-letter { fill:var(--fg); font-size:24px; font-weight:700; text-anchor:middle; }
+.algo-cipher-small { fill:var(--dim); font-size:11px; text-anchor:middle; }
+.algo-cipher-arrow { stroke:var(--amber); stroke-width:2.2; fill:none; marker-end:url("#algoCipherArrow"); }
+.algo-cipher-badge { fill:var(--mint); }
+.algo-cipher-badge-text { fill:var(--fg); font-size:13px; font-weight:600; text-anchor:middle; }
+.algo-value { fill:var(--fg); font-size:22px; font-weight:600; text-anchor:middle; }
+.algo-index { fill:var(--dim); font-size:11px; text-anchor:middle; }
+.algo-guide { stroke:var(--line2); stroke-width:1.2; stroke-dasharray:4 6; }
+.algo-marker { stroke:var(--amber); stroke-width:2; fill:none; }
+.algo-box { fill:var(--glass-soft); stroke:none; transition:none; animation:none; transform:none; }
+.algo-box.is-active { fill:var(--glass-active); }
+.algo-digit { fill:var(--fg); font-size:34px; font-weight:600; text-anchor:middle; }
+.algo-place-label { fill:var(--dim); font-size:11px; text-anchor:middle; }
+.algo-work-box {
+  fill:var(--glass-soft); stroke:none; transition:none; animation:none; transform:none;
+}
+.algo-work-box.is-active {
+  fill:var(--glass-active);
+}
+.algo-work-box.is-written { fill:var(--glass-control); }
+.algo-result-box { fill:var(--glass-active); stroke:none; }
+.algo-carry-mark {
+  fill:var(--coral); font-size:14px; font-weight:700; text-anchor:middle;
+}
+.algo-equation { fill:var(--fg); font-size:17px; font-weight:600; text-anchor:middle; }
+.algo-small { fill:var(--muted); font-size:12px; text-anchor:middle; }
+.algo-operator { fill:var(--amber); font-size:28px; font-weight:700; text-anchor:middle; }
+.algo-carry { fill:var(--coral); font-size:16px; font-weight:700; text-anchor:middle; }
+.algo-repeat-dot { fill:var(--amber); }
+.algo-repeat-group { fill:var(--glass-soft); stroke:none; transition:none; animation:none; transform:none; }
+.algo-repeat-group.is-active { fill:var(--glass-active); }
+.algo-voxel-viewport {
+  position:relative; width:100%; min-height:430px; overflow:hidden;
+  perspective:1100px; touch-action:none; cursor:grab;
+}
+.algo-voxel-viewport:active { cursor:grabbing; }
+.algo-voxel-rotor {
+  position:absolute; left:50%; top:50%; width:0; height:0;
+  transform-style:preserve-3d;
+  transform:translate(-50%,-50%) rotateX(-24deg) rotateY(38deg) scale(.86);
+}
+.algo-voxel {
+  position:absolute; left:calc(var(--cube-half,22px) * -1); top:calc(var(--cube-half,22px) * -1);
+  width:var(--cube-size,44px); height:var(--cube-size,44px);
+  transform-style:preserve-3d;
+}
+.algo-voxel-face {
+  position:absolute; inset:0; border:0; box-shadow:none;
+  background:rgba(77,113,101,.045);
+}
+.algo-voxel-face.front { transform:translateZ(var(--cube-half,22px)); }
+.algo-voxel-face.back { transform:rotateY(180deg) translateZ(var(--cube-half,22px)); }
+.algo-voxel-face.right { transform:rotateY(90deg) translateZ(var(--cube-half,22px)); filter:brightness(.82); }
+.algo-voxel-face.left { transform:rotateY(-90deg) translateZ(var(--cube-half,22px)); filter:brightness(.9); }
+.algo-voxel-face.top { transform:rotateX(90deg) translateZ(var(--cube-half,22px)); filter:brightness(1.12); }
+.algo-voxel-face.bottom { transform:rotateX(-90deg) translateZ(var(--cube-half,22px)); filter:brightness(.7); }
+.algo-voxel.is-wall .algo-voxel-face { background:rgba(72,88,84,.9); }
+.algo-voxel.is-seed .algo-voxel-face { background:rgba(92,121,196,.94); }
+.algo-voxel.is-visited .algo-voxel-face { background:rgba(92,157,139,.78); }
+.algo-voxel.is-frontier .algo-voxel-face { background:rgba(238,178,93,.92); }
+.algo-voxel.is-current .algo-voxel-face { background:#efff54; }
+.algo-hull-point {
+  position:absolute; left:-7px; top:-7px; width:14px; height:14px;
+  border-radius:50%; background:rgba(86,128,117,.8); transform-style:preserve-3d;
+}
+.algo-hull-point.is-current { background:#efff54; }
+.algo-hull-point.is-outside { background:rgba(235,173,82,.92); }
+.algo-hull-face {
+  position:absolute; left:0; top:0; width:1px; height:1px;
+  transform-origin:0 0; clip-path:polygon(0 0,100% 0,0 100%);
+  background:rgba(82,145,127,.5);
+}
+.algo-pack-face {
+  position:absolute; left:0; top:0; transform-origin:50% 50%;
+  background:rgba(82,145,127,.76);
+}
+.algo-pack-bin-face {
+  position:absolute; left:0; top:0; transform-origin:50% 50%;
+  background:rgba(73,112,102,.075); backface-visibility:hidden;
+}
+.algo-pack-face.is-current { background:#efff54; }
+.algo-pack-face.is-rejected { background:rgba(177,93,79,.82); }
+.algo-pack-rail { position:absolute; border:0; background:rgba(31,63,55,.38); transform-origin:50% 50%; }
+.algo-pack-layer { position:absolute; border:0; background:rgba(50,91,79,.045); transform-origin:0 0; pointer-events:none; }
+.algo-bin-label {
+  position:absolute; left:0; top:0; color:var(--amber); font-family:var(--mono);
+  font-size:11px; font-weight:700; white-space:nowrap; transform-origin:0 0;
+}
+.algo-hash-point {
+  position:absolute; left:-11px; top:-11px; width:22px; height:22px;
+  clip-path:polygon(50% 0,94% 24%,94% 76%,50% 100%,6% 76%,6% 24%);
+  background:rgba(80,139,123,.84); transform-style:preserve-3d;
+}
+.algo-hash-point.is-candidate { background:rgba(239,178,87,.94); }
+.algo-hash-point.is-hit { background:#d56f5d; }
+.algo-hash-id {
+  position:absolute; inset:0; display:grid; place-items:center; color:#10251f;
+  font-family:var(--mono); font-size:9px; font-weight:800; pointer-events:none;
+}
+.algo-pair-link {
+  position:absolute; left:0; top:-1px; height:2px; transform-origin:0 50%;
+  pointer-events:none;
+}
+.algo-pair-link.is-candidate { background:rgba(214,151,61,.22); }
+.algo-pair-link.is-hit { height:3px; background:rgba(190,73,58,.9); }
+.algo-model-hud {
+  position:absolute; left:20px; top:16px; z-index:2; max-width:520px;
+  color:var(--amber); font-family:var(--mono); font-size:11px; line-height:1.55;
+  pointer-events:none;
+}
+.algo-fallback {
+  position:absolute; inset:0; display:grid; place-items:center; padding:30px;
+  color:var(--muted); font-size:18px; line-height:1.7; text-align:center;
+}
+.algo-lab.is-ready .algo-fallback { display:none; }
+.algo-side {
+  min-height:0; display:grid; grid-template-rows:repeat(3,minmax(0,1fr)) auto; gap:8px;
+}
+.algo-stat {
+  min-height:0; padding:12px 14px; border-radius:14px;
+  display:flex; flex-direction:column; justify-content:center;
+}
+.algo-stat-label {
+  color:var(--dim); font-family:var(--mono); font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase;
+}
+.algo-stat b {
+  margin-top:5px; color:var(--fg); font-family:var(--mono);
+  font-size:28px; font-weight:500; line-height:1.2;
+}
+.algo-status {
+  min-height:96px; padding:12px 14px; border-left:3px solid var(--amber);
+  border-top:1px solid var(--line); color:var(--muted);
+  font-size:14px; line-height:1.55;
+}
+.algo-application {
+  display:flex; align-items:center; gap:12px; min-height:42px; padding:9px 15px;
+  border-left:4px solid var(--amber); border-radius:12px;
+  color:var(--fg); background:var(--glass); font-size:14px; line-height:1.5;
+}
+.algo-application strong {
+  flex:0 0 auto; color:var(--amber); font-family:var(--mono);
+  font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+}
+.algo-footer {
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  min-height:40px; padding:7px 14px; border-radius:14px;
+  color:var(--dim); font-family:var(--mono); font-size:12px;
+}
+.algo-legend { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.algo-samples { display:flex; align-items:center; gap:4px; }
+.algo-samples[hidden] { display:none; }
+.algo-samples-label {
+  margin-right:3px; color:var(--dim); font-size:10px;
+  letter-spacing:.08em; text-transform:uppercase;
+}
+.algo-sample {
+  width:27px; height:24px; padding:0; border:1px solid var(--line2);
+  border-radius:6px; color:var(--muted); background:var(--glass-control);
+  font-family:var(--mono); font-size:10px;
+  transition:transform .22s var(--ease-soft),background .22s,border-color .22s;
+}
+.algo-sample:hover { border-color:var(--amber); background:var(--glass-strong); }
+.algo-sample:active { transform:scale(.96); }
+.algo-sample[aria-pressed="true"] {
+  color:var(--fg); border-color:var(--fg); background:var(--glass-active);
+  box-shadow:inset 0 0 0 1px rgba(16,37,31,.2);
+}
+.algo-sample:focus-visible { outline:2px solid var(--amber); outline-offset:2px; }
+.algo-swatch { display:inline-flex; align-items:center; gap:5px; }
+.algo-swatch::before { content:""; width:8px; height:8px; border-radius:2px; background:var(--glass-soft); border:1px solid var(--line2); }
+.algo-swatch.compare::before { background:var(--amber); }
+.algo-swatch.fixed::before { background:var(--glass-active); }
+.algo-swatch.found::before { background:var(--mint); }
+.algo-caption { color:var(--muted); }
+
+/* ═══ L7C 三套视觉主题 ═══ */
+
+/* Cinematic：暖金、电影式大标题、厚实叙事卡片 */
+html[data-theme="cinematic"] .bg {
+  background:
+    radial-gradient(980px 660px at 86% 2%,rgba(255,180,84,.16),transparent 62%),
+    radial-gradient(860px 700px at 4% 96%,rgba(255,122,102,.08),transparent 66%),
+    linear-gradient(158deg,#0B0910 0%,#08070C 54%,#05060A 100%);
+}
+html[data-theme="cinematic"] .cover-title .zh { font-size:188px; }
+html[data-theme="cinematic"] .h2 { font-size:71px; }
+html[data-theme="cinematic"] .lead { font-size:27px; }
+html[data-theme="cinematic"] .card {
+  border-radius:18px;
+  background:linear-gradient(155deg,rgba(34,25,21,.9),rgba(12,16,25,.92));
+  box-shadow:0 22px 64px rgba(0,0,0,.2);
+}
+html[data-theme="cinematic"] .panel-head {
+  background:linear-gradient(90deg,rgba(255,180,84,.09),transparent);
+}
+html[data-theme="cinematic"] .ix-detail,
+html[data-theme="cinematic"] .ix-svg {
+  background:linear-gradient(145deg,rgba(255,180,84,.055),rgba(9,13,21,.82));
+}
+
+/* Lab：明亮实验台、薄荷绿强调、方角与仪表盘结构 */
+html[data-theme="lab"] {
+  color-scheme:light;
+  --type-page-title:68px; --type-cover-title:196px; --type-cover-title-en:132px;
+  --ink:#E8F1EC; --ink2:#F7FBF8;
+  --fg:#10251F; --muted:#38574D; --dim:#52685F;
+  --panel:rgba(248,252,249,.94); --panel2:#FFFFFF;
+  --line:rgba(24,79,64,.18); --line2:rgba(24,79,64,.32);
+  --glass:rgba(190,199,194,.88); --glass-strong:rgba(205,213,209,.96);
+  --glass-soft:rgba(211,218,214,.82); --glass-control:rgba(201,209,205,.9);
+  --glass-active:rgba(176,188,182,.96);
+  --amber:#066B5B; --amber2:#054C41; --coral:#C74432;
+  --cyan:#14698F; --violet:#5E54A7; --mint:#087A63;
+  --grad-warm:linear-gradient(100deg,#087F6C,#10A98B);
+  --grad-cool:linear-gradient(100deg,#14698F,#5E54A7);
+}
+html[data-theme="lab"] body { background:#DCE9E1; }
+html[data-theme="lab"] #stage { background:#E8F1EC; box-shadow:0 28px 100px rgba(26,62,48,.25); }
+html[data-theme="lab"] .bg {
+  background:
+    linear-gradient(rgba(18,80,63,.055) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(18,80,63,.055) 1px,transparent 1px),
+    radial-gradient(900px 650px at 88% 10%,rgba(8,127,108,.15),transparent 64%),
+    linear-gradient(160deg,#F3F8F5,#E3EEE7);
+  background-size:48px 48px,48px 48px,auto,auto;
+}
+html[data-theme="lab"] .bg::after { display:none; }
+html[data-theme="lab"] .vig { box-shadow:inset 0 0 0 1px rgba(24,79,64,.09); }
+html[data-theme="lab"] .brand,
+html[data-theme="lab"] .top-note,
+html[data-theme="lab"] .scene,
+html[data-theme="lab"] .count,
+html[data-theme="lab"] .cover-range,
+html[data-theme="lab"] .cover-mem,
+html[data-theme="lab"] .cover-hint { color:var(--muted); }
+html[data-theme="lab"] .lead { color:#29463D; }
+html[data-theme="lab"] .cover-sub { color:#38574D; }
+html[data-theme="lab"] .tool,
+html[data-theme="lab"] .ctl {
+  color:var(--muted); background:var(--glass-control); border-color:var(--line2);
+  backdrop-filter:blur(12px) saturate(.9);
+}
+html[data-theme="lab"] .tool:hover,
+html[data-theme="lab"] .ctl:hover { color:#FFFFFF; background:var(--amber); border-color:var(--amber); }
+html[data-theme="lab"] .bar,.html[data-theme="lab"] .meter { background:rgba(24,79,64,.12); }
+html[data-theme="lab"] .tick::before { background:rgba(24,79,64,.22); }
+html[data-theme="lab"] .tick.is-on::before { background:var(--amber); }
+html[data-theme="lab"] .card {
+  border-radius:8px; border-left:4px solid rgba(8,127,108,.55);
+  background:#F9FCFA; box-shadow:0 8px 24px rgba(35,78,63,.07);
+}
+html[data-theme="lab"] .panel,
+html[data-theme="lab"] .wx {
+  border-radius:14px; background:var(--glass);
+  box-shadow:0 10px 30px rgba(35,78,63,.08); backdrop-filter:blur(16px) saturate(.9);
+}
+html[data-theme="lab"] .panel-head,
+html[data-theme="lab"] .wx-bar {
+  color:#354D45; background:rgba(198,207,202,.92); border-color:var(--line);
+}
+html[data-theme="lab"] .ix-detail {
+  border-radius:14px; background:var(--glass);
+  backdrop-filter:blur(16px) saturate(.9);
+  box-shadow:inset 0 0 0 1px rgba(24,79,64,.04);
+}
+html[data-theme="lab"] .ix-table-wrap > .ix-detail {
+  border:0; border-left:1px solid var(--line); border-radius:0;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:none;
+  box-shadow:none;
+}
+html[data-theme="lab"] .ix-svg {
+  border-radius:14px; background:var(--glass);
+  backdrop-filter:blur(16px) saturate(.9);
+}
+html[data-theme="lab"] .chain-step,
+html[data-theme="lab"] .quiz-q {
+  background:var(--glass-soft); border-color:var(--line2); border-radius:10px;
+  backdrop-filter:blur(12px) saturate(.9);
+}
+html[data-theme="lab"] .bit {
+  color:#203B33; background:var(--glass); border-color:var(--line2);
+}
+html[data-theme="lab"] .bit.on { color:var(--fg); background:var(--glass-active); border-color:var(--fg); }
+html[data-theme="lab"] .btn.pri { color:#FFFFFF; background:var(--amber); border-color:var(--amber); }
+html[data-theme="lab"] .code { color:#183B31; background:#F4F8F5; border-color:var(--line); }
+html[data-theme="lab"] .three-shell {
+  border-radius:8px;
+  background:radial-gradient(500px 360px at 50% 48%,rgba(76,85,81,.12),transparent 72%),var(--glass);
+  backdrop-filter:blur(18px) saturate(.9);
+}
+html[data-theme="lab"] .three-status,
+html[data-theme="lab"] .three-help {
+  color:#29463D; background:rgba(205,213,209,.96); border-color:var(--line2);
+  backdrop-filter:blur(14px) saturate(.9);
+}
+html[data-theme="lab"] .three-fallback { color:#38574D; }
+html[data-theme="lab"] .help { background:rgba(57,67,62,.52); backdrop-filter:blur(14px); }
+html[data-theme="lab"] .help-card {
+  color:var(--fg); background:var(--glass-strong); border-color:var(--line2);
+  backdrop-filter:blur(20px) saturate(.9);
+}
+html[data-theme="lab"] .h2 { font-family:var(--sans); font-size:var(--type-page-title); font-weight:700; }
+html[data-theme="lab"] .eyebrow { color:var(--amber); }
+html[data-theme="lab"] .cover-title .zh { font-family:var(--sans); font-size:var(--type-cover-title); letter-spacing:-.06em; }
+html[data-theme="lab"] .cover-title .en { font-family:var(--sans); font-size:var(--type-cover-title-en); font-style:normal; }
+html[data-theme="lab"] .cover-visual {
+  border-radius:8px; border-color:var(--line);
+  background:var(--glass); backdrop-filter:blur(18px);
+}
+html[data-theme="lab"] .slide,
+html[data-theme="lab"] .enter,
+html[data-theme="lab"] .lab-btn,
+html[data-theme="lab"] .bit,
+html[data-theme="lab"] .opt,
+html[data-theme="lab"] .ix-table tbody tr,
+html[data-theme="lab"] .ix-svg [data-svg-node] {
+  transition-timing-function:cubic-bezier(.2,.8,.2,1);
+}
+html[data-theme="lab"] .slide.on .enter { animation-duration:.48s; }
+html[data-theme="lab"] .slide.on .blur { animation-name:fadeIn; }
+html[data-theme="lab"] .clock-toolbar {
+  padding:12px 16px; border:1px solid rgba(16,37,31,.18); border-radius:14px;
+  background:var(--glass); backdrop-filter:blur(18px) saturate(.9);
+  box-shadow:0 8px 22px rgba(35,78,63,.06);
+}
+html[data-theme="lab"] .clock-toolbar,
+html[data-theme="lab"] .clock-scope,
+html[data-theme="lab"] .clock-stat,
+html[data-theme="lab"] .ix-detail {
+  border-radius:14px;
+  border-color:rgba(16,37,31,.18);
+  background:var(--glass);
+  backdrop-filter:blur(16px) saturate(.9);
+  box-shadow:0 8px 22px rgba(35,78,63,.06);
+}
+html[data-theme="lab"] .ix-table tbody tr {
+  background:rgba(194,203,198,.76);
+  transform-origin:left center;
+  transition-property:transform,background,box-shadow;
+}
+html[data-theme="lab"] .ix-table tbody tr:hover {
+  background:rgba(220,226,222,.94);
+  box-shadow:none;
+}
+html[data-theme="lab"] .ix-table tbody tr.is-on {
+  background:rgba(201,209,204,.92);
+  box-shadow:none; transform:none;
+}
+html[data-theme="lab"] .ix-table-wrap[data-interacted="true"] tbody tr.is-on {
+  background:var(--glass-active);
+  box-shadow:inset 3px 0 0 var(--fg);
+  transform:scale(1.006);
+}
+html[data-theme="lab"] .lab-btn { background:var(--glass-control); }
+html[data-theme="lab"] .lab-btn:hover { background:rgba(211,219,215,.96); }
+html[data-theme="lab"] .lab-btn:active { transform:scale(.96); }
+html[data-theme="lab"] .lab-btn[aria-pressed="true"] {
+  color:var(--fg); background:rgba(190,201,195,.96); border-color:rgba(16,37,31,.62);
+  transform:none;
+}
+html[data-theme="lab"] .bit {
+  color:var(--fg); background:var(--glass);
+  border-color:rgba(16,37,31,.55); backdrop-filter:blur(12px);
+  box-shadow:none;
+}
+html[data-theme="lab"] .bit:hover { transform:translateY(-2px); background:rgba(211,219,215,.96); }
+html[data-theme="lab"] .bit.on {
+  color:var(--fg); background:var(--glass-active);
+  border:2px solid var(--fg); transform:none;
+}
+html[data-theme="lab"] .wx[data-interacted="true"] .bit.on {
+  transform:scale(1.055);
+}
+html[data-theme="lab"] .opt {
+  color:var(--fg); background:var(--glass);
+  border-color:rgba(16,37,31,.28); backdrop-filter:blur(10px);
+}
+html[data-theme="lab"] .opt:hover { color:var(--fg); background:rgba(211,219,215,.96); }
+html[data-theme="lab"] .opt.ok,
+html[data-theme="lab"] .opt.bad {
+  color:var(--fg); background:var(--glass-active);
+  border-color:var(--fg); transform:scale(1.025);
+}
+html[data-theme="lab"] .ix-svg [data-svg-node] {
+  opacity:1; transition:none;
+}
+html[data-theme="lab"] .ix-svg [data-svg-node] rect,
+html[data-theme="lab"] .ix-svg [data-svg-node] polygon,
+html[data-theme="lab"] .ix-svg [data-svg-node] circle {
+  fill:rgba(255,255,255,.32) !important; stroke:none !important;
+}
+html[data-theme="lab"] .ix-svg [data-svg-node] path,
+html[data-theme="lab"] .ix-svg [data-svg-node] line,
+html[data-theme="lab"] .ix-svg [data-svg-node] polyline {
+  fill:none !important; stroke:none !important;
+}
+html[data-theme="lab"] .ix-svg [data-svg-node] text {
+  fill:#18332B !important;
+}
+html[data-theme="lab"] .ix-svg [data-svg-node].is-on {
+  opacity:1; transform:none; filter:none;
+}
+html[data-theme="lab"] .svg-scene[data-interacted="true"] [data-svg-node].is-on {
+  transform:none;
+}
+html[data-theme="lab"] [data-flow-highlight="single-fill"] .ix-svg [data-svg-node].is-on rect,
+html[data-theme="lab"] [data-flow-highlight="single-fill"] .ix-svg [data-svg-node].is-on polygon,
+html[data-theme="lab"] [data-flow-highlight="single-fill"] .ix-svg [data-svg-node].is-on circle {
+  fill:#EFFF54 !important; stroke:none !important;
+  filter:none !important; box-shadow:none !important;
+}
+html[data-theme="lab"] [data-flow-highlight="single-fill"] .ix-svg [data-svg-node].is-on text {
+  fill:#10251F !important; font-weight:700;
+}
+html[data-theme="lab"] .tool:active,
+html[data-theme="lab"] .ctl:active,
+html[data-theme="lab"] .lab-btn:active { transform:scale(.96); }
+
+/* Atlas：紫黑谱系、章节水印、左轴与双层轮廓 */
+html[data-theme="atlas"] {
+  --amber:#D7B7FF; --amber2:#EAD8FF; --coral:#FF8BA0;
+  --cyan:#8BD5FF; --violet:#B8A1FF; --mint:#7DE2C3;
+  --panel:rgba(19,17,34,.82); --panel2:rgba(25,22,43,.96);
+  --line:rgba(218,198,255,.16); --line2:rgba(218,198,255,.3);
+}
+html[data-theme="atlas"] .bg {
+  background:
+    radial-gradient(900px 640px at 86% 8%,rgba(215,183,255,.15),transparent 66%),
+    radial-gradient(760px 680px at 4% 96%,rgba(139,213,255,.08),transparent 68%),
+    linear-gradient(158deg,#0C0A18 0%,#080812 54%,#05060C 100%);
+}
+html[data-theme="atlas"] #deck { counter-reset:atlas; }
+html[data-theme="atlas"] .slide { counter-increment:atlas; padding-left:132px; }
+html[data-theme="atlas"] .slide::before {
+  content:counter(atlas,decimal-leading-zero);
+  position:absolute; left:48px; top:78px; pointer-events:none;
+  color:rgba(215,183,255,.15); font-family:var(--serif);
+  font-size:92px; line-height:1; font-weight:700;
+}
+html[data-theme="atlas"] .slide-head {
+  padding-left:22px; border-left:2px solid rgba(215,183,255,.45);
+}
+html[data-theme="atlas"] .h2 { font-size:64px; letter-spacing:.005em; }
+html[data-theme="atlas"] .eyebrow { letter-spacing:.26em; }
+html[data-theme="atlas"] .card {
+  border-radius:22px; border-top:2px solid rgba(215,183,255,.5);
+  background:linear-gradient(160deg,rgba(31,28,52,.9),rgba(12,13,25,.9));
+}
+html[data-theme="atlas"] .panel,
+html[data-theme="atlas"] .ix-detail {
+  background:linear-gradient(155deg,rgba(31,28,52,.78),rgba(10,12,22,.84));
+  box-shadow:inset 0 0 0 1px rgba(215,183,255,.05);
+}
+html[data-theme="atlas"] .cover-title .zh { font-size:164px; }
+html[data-theme="atlas"] .cover-title .en { font-size:118px; }
+html[data-theme="atlas"] .foot { font-size:13px; letter-spacing:.16em; }
+html .cover-title.is-long .zh { font-size:var(--type-cover-title-long); }
+html .cover-title.is-long .en { font-size:var(--type-cover-title-long-en); }
+
+/* ═══ L8 帮助 / 打印 / 降级 ═══ */
+.help {
+  position:absolute; inset:0; z-index:90; display:grid; place-items:center;
+  background:rgba(3,5,10,.8); backdrop-filter:blur(10px);
+}
+.help[hidden] { display:none; }
+.help-card {
+  width:700px; padding:34px 38px 30px; border:1px solid var(--line2);
+  border-radius:18px; background:#0A0F19; box-shadow:0 30px 120px rgba(0,0,0,.7);
+}
+.help-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+.help-head b { color:var(--amber); font-family:var(--mono); font-size:13px; letter-spacing:.16em; }
+.help-close {
+  width:34px; height:34px; border:1px solid var(--line); border-radius:8px;
+  background:none; color:var(--muted); font-size:20px;
+}
+.help-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px 34px; }
+.help-row { display:flex; align-items:center; gap:10px; color:var(--muted); font-size:15px; }
+.help-note { margin-top:24px; padding-top:18px; border-top:1px solid var(--line); color:var(--dim); font-size:13px; line-height:1.7; }
+@media (prefers-reduced-motion:reduce) {
+  .slide,.enter,.tick,.btn,.tool,.ctl,.bar i { transition:none; }
+  .slide.on .enter,.slide.on .tbl tbody tr { animation:none !important; opacity:1; transform:none; filter:none; }
+  .clock-scan { animation:none !important; }
+}
+@media print {
+  @page { size:1920px 1080px; margin:0; }
+  body { overflow:visible; background:#fff; }
+  #app,#stage { position:static; width:auto; height:auto; overflow:visible; box-shadow:none; transform:none; }
+  .bg,.vig,.corner,.chrome,.help { display:none !important; }
+  .three-toolbar .tools,.three-help { display:none !important; }
+  #deck { position:static; }
+  .slide {
+    position:relative; width:1920px; height:1080px; display:flex;
+    opacity:1; visibility:visible; transform:none; break-after:page;
+  }
+  .enter { opacity:1 !important; transform:none !important; filter:none !important; animation:none !important; }
+  .foot { display:block; position:absolute; right:104px; bottom:24px; color:var(--dim); font-family:var(--mono); font-size:12px; }
+}
+</style>
+<noscript>
+<style>
+  body { overflow:auto; background:var(--ink); }
+  #app,#stage {
+    position:relative; inset:auto; left:auto; top:auto;
+    width:100%; height:auto; min-height:0; overflow:visible;
+    transform:none !important; box-shadow:none;
+  }
+  .bg,.vig,.corner,.chrome,.help { display:none !important; }
+  #deck { position:relative; inset:auto; }
+  .slide {
+    position:relative; inset:auto; display:flex !important;
+    width:100%; height:auto; min-height:720px; margin:0 auto 24px;
+    opacity:1 !important; visibility:visible !important; pointer-events:auto !important;
+    transform:none !important; border-bottom:1px solid var(--line);
+  }
+  .enter { opacity:1 !important; transform:none !important; filter:none !important; animation:none !important; }
+  .foot { display:block; }
+</style>
+</noscript>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <div class="bg" aria-hidden="true"></div>
+    <div class="vig" aria-hidden="true"></div>
+    <div class="corner tl" aria-hidden="true"></div>
+    <div class="corner tr" aria-hidden="true"></div>
+    <div class="corner bl" aria-hidden="true"></div>
+    <div class="corner br" aria-hidden="true"></div>
+
+    <header class="chrome top">
+      <div class="chrome-left">
+        <div class="brand">
+          <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3.2 20.2 20H3.8Z" fill="none" stroke="#FFB454" stroke-width="1.3"/>
+            <circle cx="12" cy="3.2" r="2.1" fill="#FFB454"/>
+            <circle cx="20.2" cy="20" r="1.7" fill="#7DD3FC"/>
+            <circle cx="3.8" cy="20" r="1.7" fill="#B49CFF"/>
+          </svg>
+          <span class="zh">{{course}} · 网页课件</span>
+          <span class="en">{{course_en}} · LECTURE</span>
+        </div>
+      </div>
+      <div class="chrome-right">
+        <span class="top-note zh">{{chapter}} · {{date}}</span>
+        <span class="top-note en">{{chapter_en}} · {{date}}</span>
+        <div class="tools">
+          <button class="tool lang" id="langBtn" type="button">
+            <span class="zh">EN</span><span class="en">中文</span>
+          </button>
+          <button class="tool" id="fsBtn" type="button" data-zh-label="全屏" data-en-label="Fullscreen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/>
+            </svg>
+          </button>
+          <button class="tool" id="helpBtn" type="button" data-zh-label="快捷键" data-en-label="Shortcuts">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M9.4 9a2.7 2.7 0 0 1 5.2.9c0 1.8-2.6 2.1-2.6 3.7"/>
+              <circle cx="12" cy="17.2" r=".9" fill="currentColor" stroke="none"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="deck">
+      <!--@slot:deck-->
+    </main>
+
+    <footer class="chrome bottom">
+      <div class="scene">
+        <span>SCENE <span id="sceneNo">01</span></span>
+        <span class="sep">/</span>
+        <span id="sceneTitle"></span>
+      </div>
+      <div class="progress-wrap">
+        <div class="bar" aria-hidden="true"><i id="barFill"></i></div>
+        <div class="ticks" id="ticks" role="tablist"></div>
+      </div>
+      <div class="nav">
+        <button class="ctl" id="prevBtn" type="button" data-zh-label="上一屏" data-en-label="Previous">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+        </button>
+        <button class="ctl" id="playBtn" type="button">
+          <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="m8 5 11 7-11 7Z"/></svg>
+          <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg>
+        </button>
+        <button class="ctl" id="nextBtn" type="button" data-zh-label="下一屏" data-en-label="Next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+        <span class="count"><b id="cur">01</b><span> / </span><span id="total">00</span></span>
+      </div>
+    </footer>
+
+    <div class="help" id="help" hidden>
+      <div class="help-card" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+        <div class="help-head">
+          <b id="helpTitle"><span class="zh">快捷键</span><span class="en">SHORTCUTS</span></b>
+          <button class="help-close" id="helpClose" type="button" aria-label="关闭">×</button>
+        </div>
+        <div class="help-grid">
+          <div class="help-row"><span class="kbd">← →</span><span class="zh">上一屏 / 下一屏</span><span class="en">Previous / next</span></div>
+          <div class="help-row"><span class="kbd">Space</span><span class="zh">下一屏</span><span class="en">Next slide</span></div>
+          <div class="help-row"><span class="kbd">Home</span><span class="zh">首屏</span><span class="en">First slide</span></div>
+          <div class="help-row"><span class="kbd">End</span><span class="zh">末屏</span><span class="en">Last slide</span></div>
+          <div class="help-row"><span class="kbd">P</span><span class="zh">自动播放</span><span class="en">Auto play</span></div>
+          <div class="help-row"><span class="kbd">L</span><span class="zh">切换语言</span><span class="en">Toggle language</span></div>
+          <div class="help-row"><span class="kbd">F</span><span class="zh">全屏</span><span class="en">Fullscreen</span></div>
+          <div class="help-row"><span class="kbd">?</span><span class="zh">打开帮助</span><span class="en">Open help</span></div>
+        </div>
+        <p class="help-note">
+          <span class="zh">支持滚轮翻屏与触屏横向滑动；所有数据和结论均静态可读。</span>
+          <span class="en">Wheel and horizontal swipe are supported; all data and conclusions remain readable without animation.</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 屏型片段：不渲染；装配时取用，最后整块删除 -->
+<template id="deck-blocks">
+
+  <!--@block:screen-cover-->
+  <section class="slide cover" data-duration="10000"
+    data-title-zh="{{deck_title}}" data-title-en="{{deck_en}}">
+    <div class="cover-grid">
+      <div class="cover-copy">
+        <p class="eyebrow enter d1">
+          <span class="zh">{{course}}<!--@if:part--> · {{part}}<!--/@if:part--></span>
+          <span class="en">{{course_en}}<!--@if:part_en--> · {{part_en}}<!--/@if:part_en--></span>
+        </p>
+        <h1 class="cover-title enter blur d2">
+          <span class="zh">{{deck_title}}</span>
+          <span class="en">{{deck_en}}</span>
+        </h1>
+        <p class="cover-sub enter d3">
+          <span class="zh">{{deck_sub}}</span>
+          <span class="en">{{deck_sub_en}}</span>
+        </p>
+        <dl class="cover-meta enter d4">
+          <dt><span class="zh">课程</span><span class="en">COURSE</span></dt>
+          <dd><span class="zh">{{course}} · {{deck_title}}</span><span class="en">{{course_en}} · {{deck_en}}</span></dd>
+          <dt><span class="zh">范围</span><span class="en">SCOPE</span></dt>
+          <dd>
+            <span class="zh">{{chapter}} · {{range}}</span>
+            <span class="en">{{chapter_en}} · {{range_en}}</span>
+          </dd>
+          <dt><span class="zh">成员</span><span class="en">MEMBERS</span></dt>
+          <dd><span class="zh">{{members}}</span><span class="en">{{members_en}}</span></dd>
+          <dt><span class="zh">版本</span><span class="en">VERSION</span></dt>
+          <dd><span class="zh">v{{version}} · {{slides}} 屏 · 中英双语 · {{date}}</span><span class="en">v{{version}} · {{slides}} slides · ZH/EN · {{date}}</span></dd>
+        </dl>
+        <div class="cover-hint enter d5">
+          <span class="kbd">→</span>
+          <span class="zh">开始 · 方向键翻屏</span>
+          <span class="en">BEGIN · use arrow keys</span>
+        </div>
+      </div>
+      <div class="cover-visual enter d3"><!--@body:visual--></div>
+    </div>
+    <span class="foot">{{s.foot}}</span>
+  </section>
+  <!--/@block:screen-cover-->
+
+  <!--@block:screen-text-->
+  <section class="slide" data-duration="9000"
+    data-title-zh="{{s.title}}" data-title-en="{{s.title_en}}">
+    <header class="slide-head">
+      <div class="eyebrow enter d1"><span class="zh">{{s.eyebrow}}</span><span class="en">{{s.eyebrow_en}}</span></div>
+      <h2 class="h2 enter blur d2"><span class="zh">{{s.title}}</span><span class="en">{{s.title_en}}</span></h2>
+      <!--@if:s.lead--><p class="lead enter d3"><span class="zh">{{s.lead}}</span><span class="en">{{s.lead_en}}</span></p><!--/@if:s.lead-->
+    </header>
+    <div class="body-area enter d4"><!--@body--></div>
+    <div class="rule enter d5"></div>
+    <!--@if:s.note--><p class="note"><span class="zh">{{s.note}}</span><span class="en">{{s.note_en}}</span></p><!--/@if:s.note-->
+    <span class="foot">{{s.foot}}</span>
+  </section>
+  <!--/@block:screen-text-->
+
+  <!--@block:screen-split-->
+  <section class="slide" data-duration="9500"
+    data-title-zh="{{s.title}}" data-title-en="{{s.title_en}}">
+    <header class="slide-head">
+      <div class="eyebrow enter d1"><span class="zh">{{s.eyebrow}}</span><span class="en">{{s.eyebrow_en}}</span></div>
+      <h2 class="h2 enter blur d2"><span class="zh">{{s.title}}</span><span class="en">{{s.title_en}}</span></h2>
+      <!--@if:s.lead--><p class="lead enter d3"><span class="zh">{{s.lead}}</span><span class="en">{{s.lead_en}}</span></p><!--/@if:s.lead-->
+    </header>
+    <div class="split enter d4">
+      <div class="col"><!--@body:left--></div>
+      <div class="col"><!--@body:right--></div>
+    </div>
+    <div class="rule enter d5"></div>
+    <!--@if:s.note--><p class="note"><span class="zh">{{s.note}}</span><span class="en">{{s.note_en}}</span></p><!--/@if:s.note-->
+    <span class="foot">{{s.foot}}</span>
+  </section>
+  <!--/@block:screen-split-->
+
+  <!--@block:screen-table-->
+  <section class="slide" data-duration="9500"
+    data-title-zh="{{s.title}}" data-title-en="{{s.title_en}}">
+    <header class="slide-head">
+      <div class="eyebrow enter d1"><span class="zh">{{s.eyebrow}}</span><span class="en">{{s.eyebrow_en}}</span></div>
+      <h2 class="h2 enter blur d2"><span class="zh">{{s.title}}</span><span class="en">{{s.title_en}}</span></h2>
+      <!--@if:s.lead--><p class="lead enter d3"><span class="zh">{{s.lead}}</span><span class="en">{{s.lead_en}}</span></p><!--/@if:s.lead-->
+    </header>
+    <div class="body-area enter d4"><!--@body--></div>
+    <div class="rule enter d5"></div>
+    <!--@if:s.note--><p class="note"><span class="zh">{{s.note}}</span><span class="en">{{s.note_en}}</span></p><!--/@if:s.note-->
+    <span class="foot">{{s.foot}}</span>
+  </section>
+  <!--/@block:screen-table-->
+
+  <!--@block:screen-figure-->
+  <!-- 图形/多视图实验台：交互根由 @body 提供，屏型本身不再包 data-iw。 -->
+  <section class="slide" data-duration="9500"
+    data-title-zh="{{s.title}}" data-title-en="{{s.title_en}}">
+    <header class="slide-head">
+      <div class="eyebrow enter d1"><span class="zh">{{s.eyebrow}}</span><span class="en">{{s.eyebrow_en}}</span></div>
+      <h2 class="h2 enter blur d2"><span class="zh">{{s.title}}</span><span class="en">{{s.title_en}}</span></h2>
+      <!--@if:s.lead--><p class="lead enter d3"><span class="zh">{{s.lead}}</span><span class="en">{{s.lead_en}}</span></p><!--/@if:s.lead-->
+    </header>
+    <div class="body-area enter d4"><!--@body--></div>
+    <div class="rule enter d5"></div>
+    <!--@if:s.note--><p class="note"><span class="zh">{{s.note}}</span><span class="en">{{s.note_en}}</span></p><!--/@if:s.note-->
+    <span class="foot">{{s.foot}}</span>
+  </section>
+  <!--/@block:screen-figure-->
+
+  <!--@block:screen-widget-->
+  <!-- 单面板控件：以下 .wx 外壳就是唯一交互根，@body 内不得嵌套同类型 data-iw。 -->
+  <section class="slide" data-duration="11000"
+    data-title-zh="{{s.title}}" data-title-en="{{s.title_en}}">
+    <header class="slide-head">
+      <div class="eyebrow enter d1"><span class="zh">{{s.eyebrow}}</span><span class="en">{{s.eyebrow_en}}</span></div>
+      <h2 class="h2 enter blur d2"><span class="zh">{{s.title}}</span><span class="en">{{s.title_en}}</span></h2>
+      <!--@if:s.lead--><p class="lead enter d3"><span class="zh">{{s.lead}}</span><span class="en">{{s.lead_en}}</span></p><!--/@if:s.lead-->
+    </header>
+    <div class="wx enter d4" data-iw="{{s.iw}}" data-iw-id="{{s.iw_key}}">
+      <div class="wx-bar">
+        <span class="wx-t"><span class="zh">{{s.iw_title}}</span><span class="en">{{s.iw_title_en}}</span></span>
+        <span class="wx-v" data-readout data-static>{{s.iw_value}}</span>
+      </div>
+      <div class="wx-body"><!--@body--></div>
+      <p class="wx-meta" data-meta></p>
+    </div>
+    <div class="rule enter d5"></div>
+    <!--@if:s.note--><p class="note"><span class="zh">{{s.note}}</span><span class="en">{{s.note_en}}</span></p><!--/@if:s.note-->
+    <span class="foot">{{s.foot}}</span>
+  </section>
+  <!--/@block:screen-widget-->
+
+  <!--@block:screen-summary-->
+  <section class="slide" data-duration="9500"
+    data-title-zh="{{s.title}}" data-title-en="{{s.title_en}}">
+    <header class="slide-head">
+      <div class="eyebrow enter d1"><span class="zh">{{s.eyebrow}}</span><span class="en">{{s.eyebrow_en}}</span></div>
+      <h2 class="h2 enter blur d2"><span class="zh">{{s.title}}</span><span class="en">{{s.title_en}}</span></h2>
+      <!--@if:s.lead--><p class="lead enter d3"><span class="zh">{{s.lead}}</span><span class="en">{{s.lead_en}}</span></p><!--/@if:s.lead-->
+    </header>
+    <div class="body-area enter d4"><!--@body--></div>
+    <div class="rule enter d5"></div>
+    <!--@if:s.note--><p class="note"><span class="zh">{{s.note}}</span><span class="en">{{s.note_en}}</span></p><!--/@if:s.note-->
+    <span class="foot">{{s.foot}}</span>
+  </section>
+  <!--/@block:screen-summary-->
+
+  <!--@block:screen-quiz-->
+  <!-- 练习屏：以下 .quiz 外壳就是唯一交互根，@body 内不得再嵌套同类型 data-iw。 -->
+  <section class="slide" data-duration="11000"
+    data-title-zh="{{s.title}}" data-title-en="{{s.title_en}}">
+    <header class="slide-head">
+      <div class="eyebrow enter d1"><span class="zh">{{s.eyebrow}}</span><span class="en">{{s.eyebrow_en}}</span></div>
+      <h2 class="h2 enter blur d2"><span class="zh">{{s.title}}</span><span class="en">{{s.title_en}}</span></h2>
+      <!--@if:s.lead--><p class="lead enter d3"><span class="zh">{{s.lead}}</span><span class="en">{{s.lead_en}}</span></p><!--/@if:s.lead-->
+    </header>
+    <div class="body-area enter d4"><div class="quiz" data-iw="quiz" data-iw-id="{{s.iw_key}}"><!--@body--></div></div>
+    <span class="foot">{{s.foot}}</span>
+  </section>
+  <!--/@block:screen-quiz-->
+
+</template>
+
+<!-- 固定版本第三方运行时：从课程仓库相对路径加载，无 CDN -->
+<script data-runtime="three" src="../courseware/_assets/vendor/three-0.160.0/three.min.js"></script>
+
+<!-- ── M1 导航、双语、自动播放与外设 ── -->
+<script>
+(function () {
+  'use strict';
+  var WIN = window;
+  var CW = WIN.CW = WIN.CW || {};
+  var themeMeta = document.querySelector('meta[name="courseware-theme"]');
+  var requestedTheme = themeMeta ? themeMeta.getAttribute('content') : 'lab';
+  if (['cinematic', 'lab', 'atlas'].indexOf(requestedTheme) >= 0) {
+    document.documentElement.setAttribute('data-theme', requestedTheme);
+  }
+  var stage = document.getElementById('stage');
+  var deck = document.getElementById('deck');
+  var slides = [].slice.call(deck.querySelectorAll('.slide'));
+  var ticks = document.getElementById('ticks');
+  var sceneNo = document.getElementById('sceneNo');
+  var sceneTitle = document.getElementById('sceneTitle');
+  var curEl = document.getElementById('cur');
+  var totalEl = document.getElementById('total');
+  var barFill = document.getElementById('barFill');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var playBtn = document.getElementById('playBtn');
+  var langBtn = document.getElementById('langBtn');
+  var fsBtn = document.getElementById('fsBtn');
+  var helpBtn = document.getElementById('helpBtn');
+  var help = document.getElementById('help');
+  var helpClose = document.getElementById('helpClose');
+  var idx = 0;
+  var playing = false;
+  var autoTimer = 0;
+  var lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'zh';
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function fit() {
+    var s = Math.min(WIN.innerWidth / 1920, WIN.innerHeight / 1080);
+    stage.style.transform = 'translate(-50%,-50%) scale(' + s + ')';
+  }
+  function currentTitle() {
+    var slide = slides[idx];
+    return slide ? (slide.getAttribute(lang === 'zh' ? 'data-title-zh' : 'data-title-en') || '') : '';
+  }
+  function updateChrome() {
+    if (!slides.length) { return; }
+    curEl.textContent = pad(idx + 1);
+    sceneNo.textContent = pad(idx + 1);
+    sceneTitle.textContent = currentTitle();
+    barFill.style.width = (((idx + 1) / slides.length) * 100).toFixed(2) + '%';
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === slides.length - 1;
+    [].forEach.call(ticks.querySelectorAll('.tick'), function (b, i) {
+      b.classList.toggle('is-on', i === idx);
+      b.setAttribute('aria-selected', i === idx ? 'true' : 'false');
+      b.setAttribute('aria-label', (lang === 'zh' ? '第 ' : 'Slide ') + (i + 1) + (lang === 'zh' ? ' 屏' : ' of ' + slides.length));
+      b.title = lang === 'zh' ? '第 ' + (i + 1) + ' 屏' : 'Slide ' + (i + 1);
+    });
+  }
+  function show(i, first) {
+    if (!slides.length) { return; }
+    var target = Math.max(0, Math.min(slides.length - 1, i));
+    if (!first && target === idx && slides[target].classList.contains('on')) { return; }
+    slides.forEach(function (s, k) {
+      s.classList.toggle('on', k === target);
+      s.setAttribute('aria-hidden', k === target ? 'false' : 'true');
+    });
+    idx = target;
+    updateChrome();
+    if (CW.play) { CW.play(slides[idx]); }
+    if (CW.mountAll) { CW.mountAll(slides[idx]); }
+    if (playing) { schedule(); }
+    document.dispatchEvent(new CustomEvent('cw:slide', { detail: { index: idx, slide: slides[idx] } }));
+    try { history.replaceState(null, '', '#s' + (idx + 1)); } catch (err) {}
+  }
+  function schedule() {
+    clearTimeout(autoTimer);
+    if (!playing || !slides[idx]) { return; }
+    var duration = Number(slides[idx].getAttribute('data-duration')) || 9000;
+    autoTimer = setTimeout(function () {
+      if (idx < slides.length - 1) { show(idx + 1); }
+      else { togglePlay(false); }
+    }, duration);
+  }
+  function togglePlay(force) {
+    playing = typeof force === 'boolean' ? force : !playing;
+    playBtn.classList.toggle('is-playing', playing);
+    playBtn.setAttribute('aria-label', lang === 'zh'
+      ? (playing ? '暂停自动播放' : '开始自动播放')
+      : (playing ? 'Pause auto play' : 'Start auto play'));
+    if (playing) { schedule(); } else { clearTimeout(autoTimer); }
+  }
+  function setLang(next) {
+    lang = next === 'en' ? 'en' : 'zh';
+    document.documentElement.setAttribute('data-lang', lang);
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    langBtn.setAttribute('aria-label', lang === 'zh' ? '切换到英文' : 'Switch to Chinese');
+    langBtn.title = lang === 'zh' ? '切换到英文' : 'Switch to Chinese';
+    helpClose.setAttribute('aria-label', lang === 'zh' ? '关闭' : 'Close');
+    [fsBtn, helpBtn, prevBtn, nextBtn].forEach(function (btn) {
+      var label = btn.getAttribute(lang === 'zh' ? 'data-zh-label' : 'data-en-label');
+      if (label) { btn.setAttribute('aria-label', label); btn.title = label; }
+    });
+    togglePlay(playing);
+    updateChrome();
+    document.dispatchEvent(new CustomEvent('cw:lang', { detail: lang }));
+  }
+  function isTyping(el) {
+    if (!el || !el.tagName) { return false; }
+    return el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT' ||
+      el.isContentEditable || !!el.closest('button,a,[role="button"],[data-svg-node]');
+  }
+  function toggleHelp(force) {
+    var showHelp = typeof force === 'boolean' ? force : help.hidden;
+    help.hidden = !showHelp;
+    if (showHelp) { helpClose.focus(); } else { helpBtn.focus(); }
+  }
+  async function toggleFs() {
+    try {
+      if (!document.fullscreenElement) { await document.documentElement.requestFullscreen(); }
+      else { await document.exitFullscreen(); }
+    } catch (err) {}
+  }
+
+  function buildTicks() {
+    ticks.innerHTML = '';
+    slides.forEach(function (slide, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'tick';
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-label', (lang === 'zh' ? '第 ' : 'Slide ') + (i + 1) + (lang === 'zh' ? ' 屏' : ' of ' + slides.length));
+      b.title = lang === 'zh' ? '第 ' + (i + 1) + ' 屏' : 'Slide ' + (i + 1);
+      b.addEventListener('click', function () { show(i); });
+      ticks.appendChild(b);
+    });
+    totalEl.textContent = pad(slides.length);
+  }
+
+  prevBtn.addEventListener('click', function () { show(idx - 1); });
+  nextBtn.addEventListener('click', function () { show(idx + 1); });
+  playBtn.addEventListener('click', function () { togglePlay(); });
+  langBtn.addEventListener('click', function () { setLang(lang === 'zh' ? 'en' : 'zh'); });
+  fsBtn.addEventListener('click', toggleFs);
+  helpBtn.addEventListener('click', function () { toggleHelp(true); });
+  helpClose.addEventListener('click', function () { toggleHelp(false); });
+  help.addEventListener('click', function (e) { if (e.target === help) { toggleHelp(false); } });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !help.hidden) { toggleHelp(false); e.preventDefault(); return; }
+    if (!help.hidden || isTyping(e.target)) { return; }
+    var key = e.key;
+    if (key === 'ArrowRight' || key === 'ArrowDown' || key === 'PageDown' || key === ' ') {
+      e.preventDefault(); show(idx + 1);
+    } else if (key === 'ArrowLeft' || key === 'ArrowUp' || key === 'PageUp') {
+      e.preventDefault(); show(idx - 1);
+    } else if (key === 'Home') {
+      e.preventDefault(); show(0);
+    } else if (key === 'End') {
+      e.preventDefault(); show(slides.length - 1);
+    } else if (key === 'p' || key === 'P') {
+      togglePlay();
+    } else if (key === 'l' || key === 'L') {
+      setLang(lang === 'zh' ? 'en' : 'zh');
+    } else if (key === 'f' || key === 'F') {
+      toggleFs();
+    } else if (key === '?') {
+      toggleHelp(true);
+    }
+  });
+
+  var wheelLock = 0;
+  WIN.addEventListener('wheel', function (e) {
+    if (!help.hidden || isTyping(e.target) || Date.now() < wheelLock || Math.abs(e.deltaY) < 20) { return; }
+    wheelLock = Date.now() + 700;
+    show(idx + (e.deltaY > 0 ? 1 : -1));
+  }, { passive: true });
+
+  var touchStart = null;
+  stage.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'touch') { return; }
+    if (e.target.closest('input,button,[role="button"]')) { return; }
+    touchStart = { x: e.clientX, y: e.clientY };
+  });
+  stage.addEventListener('pointerup', function (e) {
+    if (!touchStart || e.pointerType !== 'touch') { return; }
+    var dx = e.clientX - touchStart.x;
+    var dy = e.clientY - touchStart.y;
+    touchStart = null;
+    if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy) * 1.15) { show(idx + (dx < 0 ? 1 : -1)); }
+  });
+
+  WIN.addEventListener('resize', fit);
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden && playing) { togglePlay(false); }
+  });
+
+  CW.slideCount = slides.length;
+  CW.goto = show;
+  CW.setLang = setLang;
+  CW.togglePlay = togglePlay;
+  buildTicks();
+  fit();
+  setLang(lang);
+  var hash = parseInt((location.hash.match(/^#s(\d+)$/) || [])[1], 10);
+  show(Number.isFinite(hash) ? hash - 1 : 0, true);
+})();
+</script>
+
+<!-- ── M2 入场信号：只重播视觉状态，不承载内容 ── -->
+<script>
+(function () {
+  'use strict';
+  var CW = window.CW = window.CW || {};
+  CW.play = function (slide) {
+    if (!slide) { return; }
+    void slide.offsetWidth;
+  };
+})();
+</script>
+
+<!-- ── M3 交互注册表：组件隔离与状态保留 ── -->
+<script>
+(function () {
+  'use strict';
+  var CW = window.CW = window.CW || {};
+  window.__ST = window.__ST || {};
+  CW.REG = {};
+  CW.algoFactories = {};
+  CW._instanceKeys = {};
+  CW.AUTO_DEMO = false;
+  CW.define = function (name, build) {
+    CW.REG[name] = { build: build, instances: [] };
+  };
+  CW.defineAlgo = function (kind, factory) {
+    if (!kind || !factory || typeof factory.trace !== 'function' || typeof factory.draw !== 'function') {
+      throw new Error('CW.defineAlgo requires a kind plus trace and draw functions.');
+    }
+    CW.algoFactories[kind] = factory;
+  };
+  CW.bindVoxelOrbit = function (viewport) {
+    var rotor = viewport && viewport.querySelector('.algo-voxel-rotor');
+    if (!rotor) { return; }
+    var angleX = -24;
+    var angleY = 38;
+    var cameraScale = Number(viewport.getAttribute('data-camera-scale')) || .86;
+    var drag = null;
+    function apply(animated) {
+      rotor.style.transition = animated
+        ? 'transform .32s cubic-bezier(.22,.61,.36,1)'
+        : 'none';
+      rotor.style.transform = 'translate(-50%,-50%) rotateX(' + angleX +
+        'deg) rotateY(' + angleY + 'deg) scale(' + cameraScale + ')';
+    }
+    function reset() {
+      angleX = -24;
+      angleY = 38;
+      apply(true);
+    }
+    viewport.addEventListener('pointerdown', function (event) {
+      if (event.target.closest('button')) { return; }
+      drag = {x:event.clientX, y:event.clientY, angleX:angleX, angleY:angleY};
+    });
+    viewport.addEventListener('pointermove', function (event) {
+      if (!drag) { return; }
+      angleY = drag.angleY + (event.clientX - drag.x) * .38;
+      angleX = Math.max(-72, Math.min(18, drag.angleX - (event.clientY - drag.y) * .3));
+      apply(false);
+    });
+    viewport.addEventListener('pointerup', function () { drag = null; });
+    viewport.addEventListener('pointercancel', function () { drag = null; });
+    viewport.__resetVoxelOrbit = reset;
+    apply(false);
+  };
+  CW.createCuboid3D = function (container, width, height, depth, faceClass) {
+    if (!container) { return []; }
+    var specs = [
+      ['front', width, height, 'translateZ(' + depth / 2 + 'px)', -width / 2, -height / 2],
+      ['back', width, height, 'rotateY(180deg) translateZ(' + depth / 2 + 'px)', -width / 2, -height / 2],
+      ['right', depth, height, 'rotateY(90deg) translateZ(' + width / 2 + 'px)', -depth / 2, -height / 2],
+      ['left', depth, height, 'rotateY(-90deg) translateZ(' + width / 2 + 'px)', -depth / 2, -height / 2],
+      ['top', width, depth, 'rotateX(90deg) translateZ(' + height / 2 + 'px)', -width / 2, -depth / 2],
+      ['bottom', width, depth, 'rotateX(-90deg) translateZ(' + height / 2 + 'px)', -width / 2, -depth / 2]
+    ];
+    return specs.map(function (spec) {
+      var face = document.createElement('span');
+      face.className = (faceClass || 'algo-pack-bin-face') + ' ' + spec[0];
+      face.style.width = spec[1] + 'px';
+      face.style.height = spec[2] + 'px';
+      face.style.left = spec[4] + 'px';
+      face.style.top = spec[5] + 'px';
+      face.style.transformOrigin = '50% 50%';
+      face.style.transform = spec[3];
+      container.appendChild(face);
+      return face;
+    });
+  };
+  CW.mount = function (name, root) {
+    var widget = CW.REG[name];
+    if (!widget || !root || widget.instances.indexOf(root) >= 0) { return; }
+    var key = root.getAttribute('data-iw-id');
+    if (!key) {
+      console.warn('[widget] missing data-iw-id for ' + name);
+      return;
+    }
+    if (CW._instanceKeys[key] && CW._instanceKeys[key] !== root) {
+      console.warn('[widget] duplicate data-iw-id: ' + key);
+      return;
+    }
+    CW._instanceKeys[key] = root;
+    widget.instances.push(root);
+    window.__ST[name] = window.__ST[name] || {};
+    window.__ST[name][key] = window.__ST[name][key] || {};
+    try { widget.build(root, window.__ST[name][key], key); }
+    catch (err) { console.warn('[widget] ' + name, err); }
+  };
+  CW.mountAll = function (slide) {
+    if (!slide) { return; }
+    [].forEach.call(slide.querySelectorAll('[data-iw]'), function (el) {
+      if (el.parentElement && el.parentElement.closest('[data-iw]')) {
+        console.warn('[widget] nested data-iw is not allowed: ' + el.getAttribute('data-iw'));
+        return;
+      }
+      CW.mount(el.getAttribute('data-iw'), el);
+    });
+  };
+  CW.report = function () {
+    var names = Object.keys(CW.REG);
+    var mounted = names.reduce(function (n, key) { return n + CW.REG[key].instances.length; }, 0);
+    var declared = document.querySelectorAll('[data-iw]').length;
+    return '[CW] 屏数 ' + CW.slideCount + ' · 交互实例 ' + mounted + '/' + declared;
+  };
+
+  function digits(bits) { return bits.join('').replace(/(.{4})(?=.)/g, '$1 '); }
+  CW.define('bits', function (root, st) {
+    var cells = [].slice.call(root.querySelectorAll('.bit'));
+    var out = root.querySelector('.wx-v[data-readout]');
+    var meta = root.querySelector('[data-meta]');
+    var n = cells.length;
+    st.bits = st.bits || cells.map(function (c) { return c.getAttribute('data-v') === '1' ? 1 : 0; });
+    if (st.bits.length !== n) { st.bits = cells.map(function (c) { return c.getAttribute('data-v') === '1' ? 1 : 0; }); }
+    function render() {
+      var value = 0;
+      st.bits.forEach(function (b, i) {
+        cells[i].textContent = b;
+        cells[i].classList.toggle('on', b === 1);
+        cells[i].setAttribute('aria-pressed', b === 1 ? 'true' : 'false');
+        cells[i].setAttribute('aria-label', document.documentElement.getAttribute('data-lang') === 'en'
+          ? 'Bit ' + (i + 1)
+          : '第 ' + (i + 1) + ' 位');
+        value = value * 2 + b;
+      });
+      var signed = value >= Math.pow(2, n - 1) ? value - Math.pow(2, n) : value;
+      if (out) { out.textContent = digits(st.bits) + ' = ' + value; }
+      if (meta) {
+        meta.textContent = document.documentElement.getAttribute('data-lang') === 'en'
+          ? 'Unsigned ' + value + ' · Two’s complement ' + signed + ' · ' + n + ' bits'
+          : '无符号 ' + value + ' · 补码 ' + signed + ' · 位宽 ' + n;
+      }
+    }
+    cells.forEach(function (cell, i) {
+      cell.setAttribute('role', 'button');
+      cell.setAttribute('tabindex', '0');
+      function flip() { st.bits[i] = st.bits[i] ? 0 : 1; root.setAttribute('data-interacted', 'true'); render(); }
+      cell.addEventListener('click', flip);
+      cell.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(); }
+      });
+    });
+    render();
+    document.addEventListener('cw:lang', render);
+  });
+
+  CW.define('quiz', function (root, st) {
+    [].forEach.call(root.querySelectorAll('.quiz-q'), function (q) {
+      var opts = [].slice.call(q.querySelectorAll('.opt'));
+      var hints = [].slice.call(q.querySelectorAll('[data-quiz-hint]'));
+      var why = q.querySelector('.why');
+      opts.forEach(function (b) {
+        b.addEventListener('click', function () {
+          root.setAttribute('data-interacted', 'true');
+          opts.forEach(function (x) { x.classList.remove('ok', 'bad'); });
+          b.classList.add(b.getAttribute('data-ok') === '1' ? 'ok' : 'bad');
+          if (why) { why.classList.add('show'); }
+        });
+      });
+      hints.forEach(function (button) {
+        button.addEventListener('click', function () {
+          root.setAttribute('data-interacted', 'true');
+          st.hintOpen = !st.hintOpen;
+          button.setAttribute('aria-pressed', st.hintOpen ? 'true' : 'false');
+          if (why) { why.classList.toggle('show', st.hintOpen); }
+        });
+      });
+    });
+  });
+
+  CW.define('slider', function (root, st, key) {
+    var input = root.querySelector('.cw-range');
+    var headline = root.querySelector('.wx-v[data-readout]');
+    var out = root.querySelector('.cw-slider [data-readout]');
+    var unit = root.querySelector('.cw-slider [data-unit]');
+    var linked = document.querySelector('[data-derived-for="' + key + '"]') || root;
+    var workButtons = [].slice.call(root.querySelectorAll('[data-clock-work]'));
+    var frequencyButtons = [].slice.call(root.querySelectorAll('[data-clock-frequency]'));
+    if (!input) { return; }
+    st.value = typeof st.value === 'number' ? st.value : Number(input.value);
+    st.work = Number.isFinite(st.work) ? st.work : 20;
+    function render() {
+      var value = Number(input.value);
+      st.value = value;
+      if (headline) { headline.textContent = value.toFixed(1); }
+      if (out) { out.textContent = value.toFixed(1); }
+      if (unit) { unit.textContent = unit.textContent || ''; }
+      if (root.getAttribute('data-derive') === 'clock') {
+        var cycle = linked.querySelector('[data-cycle-ns]');
+        var hertz = linked.querySelector('[data-cycles-per-second]');
+        var total = linked.querySelector('[data-total-time]');
+        var work = linked.querySelector('[data-wave-cycles]');
+        var wave = linked.querySelector('[data-clock-wave]');
+        if (cycle) { cycle.textContent = (1 / value).toFixed(2) + ' ns'; }
+        if (hertz) { hertz.textContent = (value * 1e9).toLocaleString() + ' /s'; }
+        if (total) { total.textContent = (st.work / value).toFixed(2) + ' ns'; }
+        var lang = document.documentElement.getAttribute('data-lang');
+        var count = Math.max(1, Math.round(value * 2));
+        if (work) { work.textContent = count + (lang === 'en' ? ' cycles' : ' 周期'); }
+        input.setAttribute('aria-label', lang === 'en' ? 'Clock frequency in gigahertz' : '时钟频率（吉赫兹）');
+        [].forEach.call(frequencyButtons, function (button) {
+          var frequency = Number(button.getAttribute('data-clock-frequency'));
+          button.setAttribute('aria-pressed', frequency === value ? 'true' : 'false');
+          button.setAttribute('aria-label', lang === 'en' ? 'Frequency ' + frequency + ' gigahertz' : '频率 ' + frequency + ' 吉赫兹');
+        });
+        [].forEach.call(workButtons, function (button) {
+          var amount = Number(button.getAttribute('data-clock-work'));
+          button.setAttribute('aria-pressed', amount === st.work ? 'true' : 'false');
+          button.setAttribute('aria-label', lang === 'en' ? 'Workload ' + amount + ' cycles' : '工作量 ' + amount + ' 周期');
+        });
+        if (wave) {
+          var points = [], left = 54, right = 610, high = 62, low = 150;
+          points.push(left + ',' + low);
+          for (var i = 0; i < count; i++) {
+            var x0 = left + (right - left) * (i / count);
+            var xm = left + (right - left) * ((i + .5) / count);
+            var x1 = left + (right - left) * ((i + 1) / count);
+            points.push(x0.toFixed(1) + ',' + high, xm.toFixed(1) + ',' + high, xm.toFixed(1) + ',' + low, x1.toFixed(1) + ',' + low);
+          }
+          wave.setAttribute('points', points.join(' '));
+        }
+      }
+    }
+    input.value = String(st.value);
+    input.addEventListener('input', function () { root.setAttribute('data-interacted', 'true'); render(); });
+    frequencyButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        input.value = button.getAttribute('data-clock-frequency');
+        root.setAttribute('data-interacted', 'true');
+        render();
+      });
+    });
+    workButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        st.work = Number(button.getAttribute('data-clock-work'));
+        root.setAttribute('data-interacted', 'true');
+        render();
+      });
+    });
+    document.addEventListener('cw:lang', render);
+    render();
+  });
+
+  function localized(root, key) {
+    var en = document.documentElement.getAttribute('data-lang') === 'en';
+    return root.getAttribute('data-' + key + (en ? '-en' : '-zh')) ||
+      root.getAttribute('data-' + key + '-zh') || '';
+  }
+
+  CW.define('table', function (root, st) {
+    var rows = [].slice.call(root.querySelectorAll('tbody tr[data-title-zh][data-detail-zh]'));
+    var title = root.querySelector('[data-detail-title]');
+    var text = root.querySelector('[data-detail-text]');
+    var viewButtons = [].slice.call(root.querySelectorAll('[data-table-view]'));
+    st.index = Number.isFinite(st.index) ? st.index : 0;
+    st.view = st.view || 'all';
+    function apply(index) {
+      if (!rows.length) { return; }
+      st.index = Math.max(0, Math.min(rows.length - 1, index));
+      root.setAttribute('data-table-view', st.view);
+      rows.forEach(function (row, i) {
+        row.classList.toggle('is-on', i === st.index);
+        row.hidden = st.view === 'focus' && i !== st.index;
+        row.setAttribute('aria-selected', i === st.index ? 'true' : 'false');
+      });
+      viewButtons.forEach(function (button) {
+        button.setAttribute(
+          'aria-pressed',
+          button.getAttribute('data-table-view') === st.view ? 'true' : 'false'
+        );
+      });
+      if (title) { title.textContent = localized(rows[st.index], 'title'); }
+      if (text) { text.textContent = localized(rows[st.index], 'detail'); }
+    }
+    rows.forEach(function (row, i) {
+      row.tabIndex = 0;
+      row.setAttribute('role', 'button');
+      row.addEventListener('click', function () { root.setAttribute('data-interacted', 'true'); apply(i); });
+      row.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); root.setAttribute('data-interacted', 'true'); apply(i); }
+      });
+    });
+    viewButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        st.view = button.getAttribute('data-table-view') || 'all';
+        root.setAttribute('data-interacted', 'true');
+        apply(st.index);
+      });
+    });
+    apply(st.index);
+    document.addEventListener('cw:lang', function () { apply(st.index); });
+  });
+
+  CW.define('svg', function (root, st) {
+    var nodes = [].slice.call(root.querySelectorAll('[data-svg-node][data-label-zh][data-detail-zh]'));
+    var title = root.querySelector('[data-svg-title]');
+    var text = root.querySelector('[data-svg-detail]');
+    var viewButtons = [].slice.call(root.querySelectorAll('[data-svg-view]'));
+    st.index = Number.isFinite(st.index) ? st.index : 0;
+    st.view = st.view || 'all';
+    function apply(index) {
+      if (!nodes.length) { return; }
+      st.index = Math.max(0, Math.min(nodes.length - 1, index));
+      root.setAttribute('data-view', st.view);
+      nodes.forEach(function (node, i) {
+        node.classList.toggle('is-on', i === st.index);
+        node.setAttribute('tabindex', '0');
+        node.setAttribute('role', 'button');
+        node.setAttribute('aria-pressed', i === st.index ? 'true' : 'false');
+      });
+      viewButtons.forEach(function (button) {
+        button.setAttribute(
+          'aria-pressed',
+          button.getAttribute('data-svg-view') === st.view ? 'true' : 'false'
+        );
+      });
+      if (title) { title.textContent = localized(nodes[st.index], 'label'); }
+      if (text) { text.textContent = localized(nodes[st.index], 'detail'); }
+    }
+    nodes.forEach(function (node, i) {
+      node.addEventListener('click', function () { root.setAttribute('data-interacted', 'true'); apply(i); });
+      node.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); root.setAttribute('data-interacted', 'true'); apply(i); }
+      });
+    });
+    viewButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        st.view = button.getAttribute('data-svg-view') || 'all';
+        root.setAttribute('data-interacted', 'true');
+        apply(st.index);
+      });
+    });
+    apply(st.index);
+    document.addEventListener('cw:lang', function () { apply(st.index); });
+  });
+
+  CW.define('algo', function (root, st) {
+    var NS = 'http://www.w3.org/2000/svg';
+    var mode = root.getAttribute('data-algo-mode') || 'sort';
+    var kind = root.getAttribute('data-algo-kind') || mode;
+    var values = (root.getAttribute('data-values') || '')
+      .split(',').map(function (v) { return Number(v.trim()); })
+      .filter(function (v) { return Number.isFinite(v); });
+    var target = Number(root.getAttribute('data-target'));
+    var content = root.querySelector('[data-algo-content]');
+    var head = root.querySelector('[data-algo-head]');
+    var status = root.querySelector('[data-algo-status]');
+    var playBtn = root.querySelector('[data-algo-action="play"]');
+    var prevBtn = root.querySelector('[data-algo-action="prev"]');
+    var nextBtn = root.querySelector('[data-algo-action="next"]');
+    var timer = 0;
+    var snapshots = [];
+    var current = 0;
+    st.mode = st.mode || mode;
+    st.searchMode = st.searchMode || root.getAttribute('data-search-default') || 'linear';
+    st.arithMode = st.arithMode || root.getAttribute('data-arith-default') || 'carry';
+    st.sortKind = st.sortKind || root.getAttribute('data-sort-default') || 'bubble';
+    st.cipherDirection = st.cipherDirection || root.getAttribute('data-cipher-default') || 'encode';
+    st.cipherShift = Number.isFinite(st.cipherShift)
+      ? st.cipherShift
+      : Number(root.getAttribute('data-shift') || 3);
+    st.factor = Number.isFinite(st.factor)
+      ? st.factor
+      : Number(root.getAttribute('data-factor') || 4);
+    var speedMin = Number(root.getAttribute('data-speed-min') || (mode === 'sort' ? 1 : 0.5));
+    var speedMax = Number(root.getAttribute('data-speed-max') || (mode === 'sort' ? 30 : 3));
+    st.speed = Number.isFinite(st.speed)
+      ? Math.max(speedMin, Math.min(speedMax, st.speed))
+      : Number(root.getAttribute('data-speed') || 1);
+    if (!Number.isFinite(st.speed) || st.speed <= 0) { st.speed = speedMin; }
+
+    function isEnglish() {
+      return document.documentElement.getAttribute('data-lang') === 'en';
+    }
+    function pair(zh, en) { return isEnglish() ? en : zh; }
+    function make(tag, attrs, text) {
+      var node = document.createElementNS(NS, tag);
+      Object.keys(attrs || {}).forEach(function (key) {
+        node.setAttribute(key, attrs[key]);
+      });
+      if (text !== undefined) { node.textContent = text; }
+      return node;
+    }
+    function clearGraph() {
+      while (content && content.firstChild) { content.removeChild(content.firstChild); }
+    }
+    function stop() {
+      clearInterval(timer);
+      timer = 0;
+      if (playBtn) {
+        playBtn.setAttribute('aria-pressed', 'false');
+        var zh = playBtn.querySelector('.zh');
+        var en = playBtn.querySelector('.en');
+        if (zh) { zh.textContent = '自动播放'; }
+        if (en) { en.textContent = 'Auto play'; }
+      }
+    }
+    function playbackDelay() {
+      return Math.round(900 / st.speed);
+    }
+    function play() {
+      if (!playBtn || current >= snapshots.length - 1) { return; }
+      stop();
+      playBtn.setAttribute('aria-pressed', 'true');
+      var zh = playBtn.querySelector('.zh');
+      var en = playBtn.querySelector('.en');
+      if (zh) { zh.textContent = '暂停'; }
+      if (en) { en.textContent = 'Pause'; }
+      timer = setInterval(function () {
+        if (current < snapshots.length - 1) {
+          current += 1;
+          render();
+        } else {
+          stop();
+        }
+      }, playbackDelay());
+    }
+    function labels(type) {
+      var zh = (root.getAttribute('data-' + type + '-labels-zh') || '比较|交换|轮次').split('|');
+      var en = (root.getAttribute('data-' + type + '-labels-en') || 'Comparisons|Swaps|Passes').split('|');
+      return isEnglish() ? en : zh;
+    }
+    function setMetrics(type, numbers) {
+      var names = labels(type);
+      [].forEach.call(root.querySelectorAll('[data-algo-metric]'), function (node, i) {
+        var label = node.parentElement.querySelector('.algo-stat-label');
+        if (label) { label.textContent = names[i] || ''; }
+        node.textContent = String(numbers[i] === undefined ? '—' : numbers[i]);
+      });
+    }
+    function setStatus(zh, en) {
+      if (status) { status.textContent = pair(zh, en); }
+    }
+    function updateNav(total) {
+      var parameterOnly = st.mode === 'arith' && st.arithMode === 'repeat';
+      if (prevBtn) { prevBtn.disabled = parameterOnly || current <= 0; }
+      if (nextBtn) { nextBtn.disabled = parameterOnly || current >= total - 1; }
+      if (playBtn) { playBtn.disabled = parameterOnly || current >= total - 1; }
+    }
+    function renderSamples() {
+      var host = root.querySelector('[data-algo-samples]');
+      if (!host) { return; }
+      host.setAttribute('aria-label', pair('排序关键帧', 'Sorting key frames'));
+      var restoreFocus = document.activeElement && host.contains(document.activeElement);
+      while (host.firstChild) { host.removeChild(host.firstChild); }
+      if (snapshots.length < 2) {
+        host.hidden = true;
+        return;
+      }
+      host.hidden = false;
+      var label = document.createElement('span');
+      label.className = 'algo-samples-label';
+      label.textContent = pair('关键帧', 'Key frames');
+      host.appendChild(label);
+      var sampleCount = Math.min(10, snapshots.length);
+      for (var i = 0; i < sampleCount; i++) {
+        var sampleIndex = sampleCount === 1
+          ? 0
+          : Math.round(i * (snapshots.length - 1) / (sampleCount - 1));
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'algo-sample';
+        button.textContent = String(i + 1).padStart(2, '0');
+        button.setAttribute('data-algo-sample-index', String(sampleIndex));
+        button.setAttribute('aria-pressed', sampleIndex === current ? 'true' : 'false');
+        button.setAttribute('aria-label',
+          pair('排序样本 ' + (i + 1) + '，步骤 ' + (sampleIndex + 1) + '，数组 ',
+            'Sorting sample ' + (i + 1) + ', step ' + (sampleIndex + 1) + ', array ') +
+          '[' + snapshots[sampleIndex].values.join(', ') + ']');
+        button.addEventListener('click', function () {
+          current = Number(this.getAttribute('data-algo-sample-index'));
+          root.setAttribute('data-interacted', 'true');
+          stop();
+          render();
+        });
+        host.appendChild(button);
+        if (restoreFocus && sampleIndex === current) {
+          button.focus({ preventScroll: true });
+        }
+      }
+    }
+    function toggleControls() {
+      [].forEach.call(root.querySelectorAll('[data-algo-only]'), function (node) {
+        var key = node.getAttribute('data-algo-only');
+        var active = key === 'search' || key === 'arith'
+          ? st.mode === key
+          : key === st.mode;
+        node.hidden = !active;
+      });
+    }
+    function drawBars(snapshot, kind) {
+      clearGraph();
+      if (!content || !values.length) { return; }
+      var width = 760, height = 370, left = 48, right = 710, base = 310;
+      var maxValue = Math.max.apply(null, values.concat([1]));
+      var gap = (right - left) / values.length;
+      var barWidth = Math.min(92, gap - 12);
+      var axis = make('line', {
+        x1:left, y1:base, x2:right, y2:base, class:'algo-guide'
+      });
+      content.appendChild(axis);
+      snapshot.values.forEach(function (value, i) {
+        var h = 56 + (value / maxValue) * 210;
+        var x = left + i * gap + (gap - barWidth) / 2;
+        var y = base - h;
+        var classes = 'algo-rect';
+        if (snapshot.pair && snapshot.pair.indexOf(i) >= 0) { classes += ' is-compare'; }
+        if (snapshot.fixed && i >= values.length - snapshot.fixed) { classes += ' is-fixed'; }
+        if (snapshot.found === i) { classes += ' is-found'; }
+        if (snapshot.minIndex === i) { classes += ' is-min'; }
+        if (snapshot.keyIndex === i) { classes += ' is-key'; }
+        if (snapshot.pivotIndex === i) { classes += ' is-pivot'; }
+        if (snapshot.fixedSet && snapshot.fixedSet.indexOf(i) >= 0) { classes += ' is-fixed'; }
+        if (snapshot.range && (i < snapshot.range[0] || i > snapshot.range[1])) { classes += ' is-out'; }
+        if (snapshot.visited && snapshot.visited.indexOf(i) >= 0) { classes += ' is-out'; }
+        content.appendChild(make('rect', {
+          x:x.toFixed(1), y:y.toFixed(1), width:barWidth.toFixed(1),
+          height:h.toFixed(1), rx:'8', class:classes
+        }));
+        content.appendChild(make('text', {
+          x:(x + barWidth / 2).toFixed(1), y:(y - 10).toFixed(1), class:'algo-value'
+        }, String(value)));
+        content.appendChild(make('text', {
+          x:(x + barWidth / 2).toFixed(1), y:(base + 20).toFixed(1), class:'algo-index'
+        }, 'i=' + i));
+      });
+      if (snapshot.pair && snapshot.pair.length === 2) {
+        var x1 = left + snapshot.pair[0] * gap + 8;
+        var x2 = left + (snapshot.pair[1] + 1) * gap - 8;
+        content.appendChild(make('path', {
+          d:'M' + x1 + ',34 H' + x2 + ' M' + x1 + ',28 V40 M' + x2 + ',28 V40',
+          class:'algo-marker'
+        }));
+      }
+      if (snapshot.range && snapshot.range[0] <= snapshot.range[1]) {
+        var rx1 = left + snapshot.range[0] * gap + 8;
+        var rx2 = left + (snapshot.range[1] + 1) * gap - 8;
+        content.appendChild(make('path', {
+          d:'M' + rx1 + ',52 H' + rx2 + ' M' + rx1 + ',46 V58 M' + rx2 + ',46 V58',
+          class:'algo-range-line'
+        }));
+        content.appendChild(make('text', {
+          x:((rx1 + rx2) / 2).toFixed(1),
+          y:'42',
+          class:'algo-range-label'
+        }, pair('区间 ', 'RANGE ') + snapshot.range[0] + '–' + snapshot.range[1]));
+      }
+      var caption = make('text', {x:'48', y:'24', class:'algo-index'}, kind);
+      caption.setAttribute('text-anchor', 'start');
+      content.appendChild(caption);
+    }
+    function drawSearchCells(snapshot, kind) {
+      clearGraph();
+      if (!content || !values.length) { return; }
+      var width = 760, left = 42, right = 718;
+      var gap = (right - left) / values.length;
+      var cellWidth = Math.min(86, gap - 10);
+      var y = 150;
+      var firstCenter = left + snapshot.range[0] * gap + gap / 2;
+      var lastCenter = left + snapshot.range[1] * gap + gap / 2;
+
+      content.appendChild(make('text', {
+        x:'42', y:'34', class:'algo-index'
+      }, kind)).setAttribute('text-anchor', 'start');
+      if (snapshot.range[0] <= snapshot.range[1]) {
+        content.appendChild(make('path', {
+          d:'M' + firstCenter + ',104 H' + lastCenter + ' M' +
+            firstCenter + ',97 V111 M' + lastCenter + ',97 V111',
+          class:'algo-range-line'
+        }));
+        content.appendChild(make('text', {
+          x:((firstCenter + lastCenter) / 2).toFixed(1),
+          y:'88',
+          class:'algo-range-label'
+        }, pair('当前区间 ', 'RANGE ') + snapshot.range[0] + '–' + snapshot.range[1]));
+      }
+
+      snapshot.values.forEach(function (value, i) {
+        var x = left + i * gap + (gap - cellWidth) / 2;
+        var classes = 'algo-cell';
+        if (snapshot.pair && snapshot.pair.indexOf(i) >= 0) {
+          classes += snapshot.found === i ? ' is-found' : ' is-compare';
+        }
+        if (snapshot.visited && snapshot.visited.indexOf(i) >= 0) { classes += ' is-out'; }
+        if (i < snapshot.range[0] || i > snapshot.range[1]) { classes += ' is-out'; }
+        content.appendChild(make('rect', {
+          x:x.toFixed(1), y:String(y), width:cellWidth.toFixed(1),
+          height:'72', rx:'9', class:classes
+        }));
+        content.appendChild(make('text', {
+          x:(x + cellWidth / 2).toFixed(1),
+          y:'193',
+          class:'algo-cell-value'
+        }, String(value)));
+        content.appendChild(make('text', {
+          x:(x + cellWidth / 2).toFixed(1),
+          y:'246',
+          class:'algo-cell-index'
+        }, 'i=' + i));
+      });
+
+      content.appendChild(make('text', {
+        x:'380', y:'316', class:'algo-range-label'
+      }, pair('目标值 ', 'TARGET ') + target + ' · ' +
+        pair('比较 ', 'comparisons ') + snapshot.comparisons));
+    }
+    function sortTrace(input) {
+      var arr = input.slice();
+      var result = [{
+        values:arr.slice(), comparisons:0, swaps:0, pass:0, pair:[0,1], fixed:0, done:false,
+        zh:'准备比较前两个相邻元素。', en:'Prepare to compare the first adjacent pair.'
+      }];
+      var n = arr.length, swapped = n > 1, comparisons = 0, swaps = 0, pass = 0;
+      while (swapped && n > 1) {
+        swapped = false;
+        pass += 1;
+        for (var i = 0; i < n - 1; i++) {
+          comparisons += 1;
+          var a = arr[i], b = arr[i + 1];
+          var didSwap = a > b;
+          if (didSwap) {
+            arr[i] = b;
+            arr[i + 1] = a;
+            swaps += 1;
+          }
+          result.push({
+            values:arr.slice(), comparisons:comparisons, swaps:swaps, pass:pass,
+            pair:[i, i + 1], fixed:input.length - n, done:false,
+            zh:'比较 ' + a + ' 与 ' + b + (didSwap
+              ? '：逆序，交换。'
+              : '：顺序正确，不交换。'),
+            en:'Compare ' + a + ' and ' + b + (didSwap
+              ? ': out of order, swap.'
+              : ': in order, keep.')
+          });
+          swapped = swapped || didSwap;
+        }
+        n -= 1;
+        if (!swapped) {
+          result[result.length - 1].pair = [];
+          result[result.length - 1].fixed = input.length;
+          result[result.length - 1].fixedSet = arr.map(function (_, i) { return i; });
+          result[result.length - 1].done = true;
+          result[result.length - 1].zh += ' 本轮无交换，提前结束。';
+          result[result.length - 1].en += ' No swaps in this pass, so the algorithm stops.';
+        }
+      }
+      return result;
+    }
+    function selectionTrace(input) {
+      var arr = input.slice();
+      var comparisons = 0, writes = 0, phase = 0;
+      var result = [{
+        values:arr.slice(), pair:[0, Math.min(1, arr.length - 1)], fixedSet:[],
+        comparisons:comparisons, writes:writes, phase:phase,
+        zh:'从未排序区寻找最小值。', en:'Find the minimum in the unsorted region.'
+      }];
+      for (var i = 0; i < arr.length - 1; i++) {
+        var min = i;
+        phase = i + 1;
+        result.push({
+          values:arr.slice(), pair:[i, min], minIndex:min,
+          fixedSet:Array.from({length:i}, function (_, k) { return k; }),
+          comparisons:comparisons, writes:writes, phase:phase,
+          zh:'第 ' + phase + ' 个位置暂定最小值为 ' + arr[min] + '。',
+          en:'Position ' + phase + ' starts with ' + arr[min] + ' as the minimum.'
+        });
+        for (var j = i + 1; j < arr.length; j++) {
+          comparisons += 1;
+          var smaller = arr[j] < arr[min];
+          if (smaller) { min = j; }
+          result.push({
+            values:arr.slice(), pair:[j, min], minIndex:min,
+            fixedSet:Array.from({length:i}, function (_, k) { return k; }),
+            comparisons:comparisons, writes:writes, phase:phase,
+            zh:'比较 ' + arr[j] + ' 与当前最小值 ' + arr[min] + (smaller ? '，更新最小值。' : '，最小值不变。'),
+            en:'Compare ' + arr[j] + ' with minimum ' + arr[min] + (smaller ? '; update the minimum.' : '; keep the minimum.')
+          });
+        }
+        if (min !== i) {
+          var temp = arr[i]; arr[i] = arr[min]; arr[min] = temp; writes += 1;
+        }
+        result.push({
+          values:arr.slice(), pair:[], minIndex:i,
+          fixedSet:Array.from({length:i + 1}, function (_, k) { return k; }),
+          comparisons:comparisons, writes:writes, phase:phase,
+          zh:'将最小值放到第 ' + (i + 1) + ' 个位置。',
+          en:'Place the minimum at position ' + (i + 1) + '.'
+        });
+      }
+      result.push({
+        values:arr.slice(), pair:[], fixedSet:arr.map(function (_, i) { return i; }),
+        comparisons:comparisons, writes:writes, phase:phase, done:true,
+        zh:'所有位置已确定。', en:'Every position is fixed.'
+      });
+      return result;
+    }
+    function insertionTrace(input) {
+      var arr = input.slice();
+      var comparisons = 0, writes = 0, phase = 0;
+      var result = [{
+        values:arr.slice(), pair:[0, Math.min(1, arr.length - 1)],
+        fixedSet:[0], comparisons:0, writes:0, phase:0,
+        zh:'第一个元素天然构成有序前缀。', en:'The first element forms the sorted prefix.'
+      }];
+      for (var i = 1; i < arr.length; i++) {
+        phase = i;
+        var j = i;
+        result.push({
+          values:arr.slice(), pair:[i - 1, i], keyIndex:i,
+          fixedSet:Array.from({length:i}, function (_, k) { return k; }),
+          comparisons:comparisons, writes:writes, phase:phase,
+          zh:'取出 ' + arr[i] + '，向左寻找插入位置。',
+          en:'Lift ' + arr[i] + ' and search left for its insertion point.'
+        });
+        while (j > 0) {
+          comparisons += 1;
+          if (arr[j - 1] <= arr[j]) {
+            result.push({
+              values:arr.slice(), pair:[j - 1, j], keyIndex:j,
+              fixedSet:Array.from({length:i}, function (_, k) { return k; }),
+              comparisons:comparisons, writes:writes, phase:phase,
+              zh:arr[j - 1] + ' ≤ ' + arr[j] + '，停止左移。',
+              en:arr[j - 1] + ' ≤ ' + arr[j] + '; stop moving left.'
+            });
+            break;
+          }
+          var swap = arr[j - 1]; arr[j - 1] = arr[j]; arr[j] = swap; writes += 1;
+          result.push({
+            values:arr.slice(), pair:[j - 1, j], keyIndex:j - 1,
+            fixedSet:Array.from({length:i}, function (_, k) { return k; }),
+            comparisons:comparisons, writes:writes, phase:phase,
+            zh:'键值仍比左邻小，向左移动一格。', en:'The key is smaller than its left neighbor, so move left.'
+          });
+          j -= 1;
+        }
+        result.push({
+          values:arr.slice(), pair:[], keyIndex:j,
+          fixedSet:Array.from({length:i + 1}, function (_, k) { return k; }),
+          comparisons:comparisons, writes:writes, phase:phase,
+          zh:'键值插入完成，有序前缀扩展到 ' + (i + 1) + ' 项。',
+          en:'Insertion complete; the sorted prefix grows to ' + (i + 1) + ' items.'
+        });
+      }
+      result.push({
+        values:arr.slice(), pair:[], fixedSet:arr.map(function (_, i) { return i; }),
+        comparisons:comparisons, writes:writes, phase:phase, done:true,
+        zh:'所有元素已插入有序前缀。', en:'Every element is inserted into the sorted prefix.'
+      });
+      return result;
+    }
+    function mergeTrace(input) {
+      var arr = input.slice();
+      var comparisons = 0, writes = 0, phase = 0;
+      var result = [{
+        values:arr.slice(), pair:[], fixedSet:[],
+        comparisons:0, writes:0, phase:0,
+        zh:'从长度为 1 的有序区间开始合并。', en:'Start by merging intervals of length one.'
+      }];
+      for (var width = 1; width < arr.length; width *= 2) {
+        for (var lo = 0; lo < arr.length; lo += width * 2) {
+          var mid = Math.min(lo + width - 1, arr.length - 1);
+          var hi = Math.min(lo + width * 2 - 1, arr.length - 1);
+          if (mid >= hi) { continue; }
+          phase += 1;
+          result.push({
+            values:arr.slice(), pair:[lo, mid + 1], range:[lo, hi], fixedSet:[],
+            comparisons:comparisons, writes:writes, phase:phase,
+            zh:'合并有序区间 ' + lo + '–' + mid + ' 与 ' + (mid + 1) + '–' + hi + '。',
+            en:'Merge intervals ' + lo + '–' + mid + ' and ' + (mid + 1) + '–' + hi + '.'
+          });
+          var left = arr.slice(lo, mid + 1), right = arr.slice(mid + 1, hi + 1);
+          var i = 0, j = 0, k = lo;
+          while (i < left.length && j < right.length) {
+            comparisons += 1;
+            var takeLeft = left[i] <= right[j];
+            result.push({
+              values:arr.slice(), pair:[Math.min(lo + i, mid), Math.min(mid + 1 + j, hi)],
+              range:[lo, hi], fixedSet:[], comparisons:comparisons, writes:writes, phase:phase,
+              zh:'比较左区间 ' + left[i] + ' 与右区间 ' + right[j] + '。',
+              en:'Compare left value ' + left[i] + ' with right value ' + right[j] + '.'
+            });
+            arr[k++] = takeLeft ? left[i++] : right[j++];
+            writes += 1;
+            result.push({
+              values:arr.slice(), pair:[], range:[lo, hi], fixedSet:[],
+              comparisons:comparisons, writes:writes, phase:phase,
+              zh:'将较小值写入合并区。', en:'Write the smaller value into the merged interval.'
+            });
+          }
+          while (i < left.length) { arr[k++] = left[i++]; writes += 1; }
+          while (j < right.length) { arr[k++] = right[j++]; writes += 1; }
+          result.push({
+            values:arr.slice(), pair:[], range:[lo, hi],
+            fixedSet:Array.from({length:hi - lo + 1}, function (_, t) { return lo + t; }),
+            comparisons:comparisons, writes:writes, phase:phase,
+            zh:'区间合并完成。', en:'The interval merge is complete.'
+          });
+        }
+      }
+      result.push({
+        values:arr.slice(), pair:[], fixedSet:arr.map(function (_, i) { return i; }),
+        comparisons:comparisons, writes:writes, phase:phase, done:true,
+        zh:'所有区间完成合并。', en:'All intervals are merged.'
+      });
+      return result;
+    }
+    function quickTrace(input) {
+      var arr = input.slice();
+      var comparisons = 0, writes = 0, phase = 0, fixedSet = [];
+      var result = [{
+        values:arr.slice(), pair:[], fixedSet:[], comparisons:0, writes:0, phase:0,
+        zh:'选择枢轴并划分区间。', en:'Choose a pivot and partition its interval.'
+      }];
+      function sortRange(lo, hi) {
+        if (lo > hi) { return; }
+        if (lo === hi) {
+          fixedSet.push(lo);
+          result.push({
+            values:arr.slice(), pair:[], pivotIndex:lo, fixedSet:fixedSet.slice(),
+            comparisons:comparisons, writes:writes, phase:phase,
+            zh:'单元素区间 ' + lo + ' 已确定。', en:'Single-element interval ' + lo + ' is fixed.'
+          });
+          return;
+        }
+        var pivot = arr[hi], i = lo - 1;
+        phase += 1;
+        result.push({
+          values:arr.slice(), pair:[lo, hi], pivotIndex:hi, range:[lo, hi],
+          fixedSet:fixedSet.slice(), comparisons:comparisons, writes:writes, phase:phase,
+          zh:'区间 ' + lo + '–' + hi + '，枢轴为 ' + pivot + '。',
+          en:'Interval ' + lo + '–' + hi + ' with pivot ' + pivot + '.'
+        });
+        for (var j = lo; j < hi; j++) {
+          comparisons += 1;
+          var goesLeft = arr[j] <= pivot;
+          result.push({
+            values:arr.slice(), pair:[j, hi], pivotIndex:hi, range:[lo, hi],
+            fixedSet:fixedSet.slice(), comparisons:comparisons, writes:writes, phase:phase,
+            zh:'比较 ' + arr[j] + ' 与枢轴 ' + pivot + (goesLeft ? '，放入左区。' : '，留在右区。'),
+            en:'Compare ' + arr[j] + ' with pivot ' + pivot + (goesLeft ? '; place left.' : '; keep right.')
+          });
+          if (goesLeft) {
+            i += 1;
+            if (i !== j) {
+              var swap = arr[i]; arr[i] = arr[j]; arr[j] = swap;
+              writes += 1;
+            }
+            result.push({
+              values:arr.slice(), pair:[i, j], pivotIndex:hi, range:[lo, hi],
+              fixedSet:fixedSet.slice(), comparisons:comparisons, writes:writes, phase:phase,
+              zh:'把较小元素移动到枢轴左侧。', en:'Move the smaller value to the pivot’s left side.'
+            });
+          }
+        }
+        var pivotPos = i + 1;
+        var finalSwap = arr[pivotPos]; arr[pivotPos] = arr[hi]; arr[hi] = finalSwap; writes += 1;
+        fixedSet.push(pivotPos);
+        result.push({
+          values:arr.slice(), pair:[], pivotIndex:pivotPos, range:[lo, hi],
+          fixedSet:fixedSet.slice(), comparisons:comparisons, writes:writes, phase:phase,
+          zh:'枢轴归位到索引 ' + pivotPos + '。', en:'The pivot settles at index ' + pivotPos + '.'
+        });
+        sortRange(lo, pivotPos - 1);
+        sortRange(pivotPos + 1, hi);
+      }
+      sortRange(0, arr.length - 1);
+      result.push({
+        values:arr.slice(), pair:[], fixedSet:arr.map(function (_, i) { return i; }),
+        comparisons:comparisons, writes:writes, phase:phase, done:true,
+        zh:'所有枢轴均已归位。', en:'Every pivot is fixed.'
+      });
+      return result;
+    }
+    function searchTrace(kind) {
+      var result = [{
+        values:values.slice(), pair:[], range:[0, values.length - 1], found:-1,
+        comparisons:0, visited:[],
+        zh:'目标为 ' + target + '，准备开始查找。',
+        en:'Target is ' + target + '. Prepare to search.'
+      }];
+      if (kind === 'linear') {
+        for (var i = 0; i < values.length; i++) {
+          var found = values[i] === target;
+          var visited = [];
+          for (var k = 0; k < i; k++) { visited.push(k); }
+          result.push({
+            values:values.slice(), pair:[i], range:[0, values.length - 1],
+            found:found ? i : -1, comparisons:i + 1, visited:visited,
+            zh:(found ? '索引 ' + i + ' 等于 ' + target + '，找到目标。'
+              : '索引 ' + i + ' 的值为 ' + values[i] + '，不是目标。'),
+            en:(found ? 'Index ' + i + ' equals ' + target + '. Target found.'
+              : 'Index ' + i + ' contains ' + values[i] + ', not the target.')
+          });
+          if (found) { break; }
+        }
+      } else {
+        var low = 0, high = values.length - 1, comparisons = 0;
+        while (low <= high) {
+          var mid = Math.floor((low + high) / 2);
+          comparisons += 1;
+          var hit = values[mid] === target;
+          if (hit) {
+            result.push({
+              values:values.slice(), pair:[mid], range:[low, high], found:mid,
+              comparisons:comparisons, visited:[],
+              zh:'中点索引 ' + mid + ' 等于 ' + target + '，找到目标。',
+              en:'Midpoint index ' + mid + ' equals ' + target + '. Target found.'
+            });
+            break;
+          }
+          if (values[mid] < target) {
+            result.push({
+              values:values.slice(), pair:[mid], range:[low, high], found:-1,
+              comparisons:comparisons, visited:[],
+              zh:'中点索引 ' + mid + ' 的值 ' + values[mid] + ' 小于目标，搜索右半区。',
+              en:'Midpoint ' + mid + ' contains ' + values[mid] + ', below the target. Search the right half.'
+            });
+            low = mid + 1;
+          } else {
+            result.push({
+              values:values.slice(), pair:[mid], range:[low, high], found:-1,
+              comparisons:comparisons, visited:[],
+              zh:'中点索引 ' + mid + ' 的值 ' + values[mid] + ' 大于目标，搜索左半区。',
+              en:'Midpoint ' + mid + ' contains ' + values[mid] + ', above the target. Search the left half.'
+            });
+            high = mid - 1;
+          }
+        }
+        if (result[result.length - 1].found === -1) {
+          result.push({
+            values:values.slice(), pair:[], range:[low, high], found:-1,
+            comparisons:comparisons, visited:[],
+            zh:'区间为空，目标不存在。',
+            en:'The interval is empty; the target is absent.'
+          });
+        }
+      }
+      return result;
+    }
+    function carryTrace() {
+      var a = Number(root.getAttribute('data-a') || 38);
+      var b = Number(root.getAttribute('data-b') || 27);
+      var ones = a % 10 + b % 10;
+      var carry = ones >= 10 ? 1 : 0;
+      var result = a + b;
+      return [
+        { stage:0, carry:0, result:null, zh:'从个位开始，对齐两个数字。', en:'Start at the ones column and align both numbers.' },
+        { stage:1, carry:carry, result:ones % 10, zh:'个位 ' + (a % 10) + ' + ' + (b % 10) + ' = ' + ones + '，写下 ' + (ones % 10) + (carry ? '，向十位进 1。' : '。'), en:'Ones: ' + (a % 10) + ' + ' + (b % 10) + ' = ' + ones + '. Write ' + (ones % 10) + (carry ? ' and carry 1.' : '.') },
+        { stage:2, carry:0, result:result, zh:'十位计入进位后得到 ' + Math.floor(result / 10) + '，结果为 ' + result + '。', en:'Include the carry in the tens column to finish with ' + result + '.' },
+        { stage:3, carry:0, result:result, zh:'加法完成：每一位只执行加、写和进位。', en:'Addition complete: each digit uses only add, write, and carry steps.' }
+      ];
+    }
+    function gcdTrace() {
+      var a = Number(root.getAttribute('data-gcd-a') || 48);
+      var b = Number(root.getAttribute('data-gcd-b') || 18);
+      var result = [{
+        a:a, b:b, step:0, remainder:a % b,
+        zh:'计算余数 ' + a + ' mod ' + b + '。',
+        en:'Compute ' + a + ' mod ' + b + '.'
+      }];
+      var step = 0;
+      while (b !== 0) {
+        step += 1;
+        var remainder = a % b;
+        result.push({
+          a:a, b:b, step:step, remainder:remainder,
+          zh:'余数为 ' + remainder + '，下一步用 ' + b + ' 和 ' + remainder + '。',
+          en:'The remainder is ' + remainder + '; continue with ' + b + ' and ' + remainder + '.'
+        });
+        var next = b;
+        b = remainder;
+        a = next;
+      }
+      result.push({
+        a:a, b:0, step:step, remainder:null, done:true,
+        zh:'余数为 0，最大公因数是 ' + a + '。',
+        en:'The remainder is 0; the greatest common divisor is ' + a + '.'
+      });
+      return result;
+    }
+    function cipherTrace() {
+      var decode = st.cipherDirection === 'decode';
+      var text = (decode
+        ? root.getAttribute('data-ciphertext') || 'DOJRULWKP'
+        : root.getAttribute('data-plaintext') || 'ALGORITHM').toUpperCase();
+      var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      var direction = decode ? -1 : 1;
+      var delta = direction * st.cipherShift;
+      var output = '';
+      var result = [{
+        index:-1, source:'—', target:'—', output:'', processed:0,
+        zh:'移位量为 ' + st.cipherShift + '，准备逐字转换。',
+        en:'Use shift ' + st.cipherShift + ' and transform one character at a time.'
+      }];
+      for (var i = 0; i < text.length; i++) {
+        var source = text.charAt(i);
+        var at = alphabet.indexOf(source);
+        var target = source;
+        if (at >= 0) {
+          target = alphabet.charAt((at + delta + 26) % 26);
+        }
+        output += target;
+        result.push({
+          index:i, source:source, target:target, output:output, processed:i + 1,
+          zh:source + (direction > 0 ? ' 向后移 ' : ' 向前移 ') + st.cipherShift + ' 格得到 ' + target + '。',
+          en:source + (direction > 0 ? ' shifts forward by ' : ' shifts backward by ') + st.cipherShift + ' to become ' + target + '.'
+        });
+      }
+      return result;
+    }
+    function drawGcd(snapshot) {
+      clearGraph();
+      if (!content) { return; }
+      [[snapshot.a, 'a', 150], [snapshot.b, 'b', 460]].forEach(function (item) {
+        content.appendChild(make('rect', {
+          x:item[2], y:'128', width:'170', height:'100', rx:'12',
+          class:'algo-box is-active'
+        }));
+        content.appendChild(make('text', {
+          x:item[2] + 85, y:'166', class:'algo-small'
+        }, item[1]));
+        content.appendChild(make('text', {
+          x:item[2] + 85, y:'205', class:'algo-digit'
+        }, String(item[0])));
+      });
+      content.appendChild(make('path', {
+        d:'M330 178 H450', class:'algo-marker'
+      }));
+      content.appendChild(make('text', {
+        x:'390', y:'164', class:'algo-small'
+      }, pair('更新', 'next')));
+      content.appendChild(make('text', {
+        x:'380', y:'282', class:'algo-value'
+      }, snapshot.done
+        ? pair('GCD = ' + snapshot.a, 'GCD = ' + snapshot.a)
+        : pair('余数 = ' + snapshot.remainder, 'remainder = ' + snapshot.remainder)));
+    }
+    function drawCipher(snapshot) {
+      clearGraph();
+      if (!content) { return; }
+      var decode = st.cipherDirection === 'decode';
+      var text = (decode
+        ? root.getAttribute('data-ciphertext') || 'DOJRULWKP'
+        : root.getAttribute('data-plaintext') || 'ALGORITHM').toUpperCase();
+      var left = 34, right = 726;
+      var gap = (right - left) / text.length;
+      var cellWidth = Math.min(54, gap - 8);
+      var topY = 140, bottomY = 250;
+      var defs = make('defs');
+      var marker = make('marker', {
+        id:'algoCipherArrow', markerWidth:'7', markerHeight:'7',
+        refX:'6', refY:'3.5', orient:'auto'
+      });
+      marker.appendChild(make('path', {
+        d:'M0,0 L7,3.5 L0,7 Z', fill:'#066B5B'
+      }));
+      defs.appendChild(marker);
+      content.appendChild(defs);
+      content.appendChild(make('text', {
+        x:'380', y:'38', class:'algo-range-label'
+      }, (st.cipherDirection === 'decode' ? pair('解密', 'DECODE') : pair('加密', 'ENCODE')) +
+        ' · SHIFT ' + st.cipherShift));
+      for (var i = 0; i < text.length; i++) {
+        var x = left + i * gap + (gap - cellWidth) / 2;
+        var isCurrent = snapshot.index === i;
+        var isDone = i < snapshot.processed;
+        var sourceClass = 'algo-cipher-cell' + (isCurrent ? ' is-on' : isDone ? ' is-done' : '');
+        var targetClass = 'algo-cipher-cell' + (isCurrent ? ' is-on' : isDone ? ' is-done' : '');
+        content.appendChild(make('rect', {
+          x:x.toFixed(1), y:String(topY), width:cellWidth.toFixed(1),
+          height:'58', rx:'9', class:sourceClass
+        }));
+        content.appendChild(make('text', {
+          x:(x + cellWidth / 2).toFixed(1), y:String(topY + 39),
+          class:'algo-cipher-letter'
+        }, text.charAt(i)));
+        content.appendChild(make('rect', {
+          x:x.toFixed(1), y:String(bottomY), width:cellWidth.toFixed(1),
+          height:'58', rx:'9', class:targetClass
+        }));
+        content.appendChild(make('text', {
+          x:(x + cellWidth / 2).toFixed(1), y:String(bottomY + 39),
+          class:'algo-cipher-letter'
+        }, isDone ? snapshot.output.charAt(i) : '·'));
+        if (isCurrent) {
+          content.appendChild(make('path', {
+            d:'M' + (x + cellWidth / 2) + ',' + (topY + 67) + ' V' + (bottomY - 9),
+            class:'algo-cipher-arrow'
+          }));
+        }
+      }
+      content.appendChild(make('text', {
+        x:'36', y:'126', class:'algo-index'
+      }, decode ? 'CIPHERTEXT / 密文' : 'PLAINTEXT / 明文'));
+      content.appendChild(make('text', {
+        x:'36', y:'238', class:'algo-index'
+      }, decode ? 'PLAINTEXT / 明文' : 'CIPHERTEXT / 密文'));
+      if (snapshot.processed) {
+        content.appendChild(make('rect', {
+          x:'286', y:'326', width:'188', height:'30', rx:'15',
+          class:'algo-cipher-badge'
+        }));
+        content.appendChild(make('text', {
+          x:'380', y:'346', class:'algo-cipher-badge-text'
+        }, snapshot.source + ' → ' + snapshot.target));
+      }
+    }
+    function drawArithmetic(snapshot) {
+      clearGraph();
+      if (!content) { return; }
+      if (st.arithMode === 'repeat') {
+        var base = Number(root.getAttribute('data-repeat-base') || 3);
+        var cols = 3, gap = 150, startX = 100, startY = 72;
+        for (var i = 0; i < st.factor; i++) {
+          var row = Math.floor(i / cols), col = i % cols;
+          var x = startX + col * gap, y = startY + row * 110;
+          content.appendChild(make('rect', {
+            x:x, y:y, width:112, height:74, rx:'10', class:'algo-repeat-group'
+          }));
+          for (var d = 0; d < base; d++) {
+            content.appendChild(make('circle', {
+              cx:x + 30 + d * 26, cy:y + 37, r:'8', class:'algo-repeat-dot'
+            }));
+          }
+        }
+        content.appendChild(make('text', {x:'370', y:'334', class:'algo-value'}, base + ' × ' + st.factor + ' = ' + (base * st.factor)));
+        return;
+      }
+      var a = Number(root.getAttribute('data-a') || 38);
+      var b = Number(root.getAttribute('data-b') || 27);
+      [a, b].forEach(function (value, row) {
+        var digits = String(value).split('');
+        digits.forEach(function (digit, col) {
+          var x = 280 + col * 92;
+          content.appendChild(make('rect', {
+            x:x, y:80 + row * 86, width:62, height:58, rx:'8', class:'algo-box'
+          }));
+          content.appendChild(make('text', {
+            x:x + 31, y:120 + row * 86, class:'algo-digit'
+          }, digit));
+        });
+      });
+      content.appendChild(make('text', {x:'230', y:'154', class:'algo-operator'}, '+'));
+      content.appendChild(make('line', {x1:'250', y1:'220', x2:'460', y2:'220', class:'algo-guide'}));
+      if (snapshot.carry) {
+        content.appendChild(make('text', {x:'470', y:'72', class:'algo-carry'}, 'carry ' + snapshot.carry));
+      }
+      if (snapshot.result !== null) {
+        content.appendChild(make('text', {
+          x:'380', y:'282', class:'algo-value'
+        }, String(snapshot.result)));
+      }
+      content.appendChild(make('text', {
+        x:'380', y:'330', class:'algo-small'
+      }, snapshot.stage === 0
+        ? pair('对齐数位', 'align columns')
+        : snapshot.stage === 1
+          ? pair('个位', 'ones column')
+          : pair('十位', 'tens column')));
+    }
+    function render() {
+      toggleControls();
+      var customFactory = CW.algoFactories && CW.algoFactories[kind];
+      if (customFactory) {
+        snapshots = customFactory.trace(values, root, st);
+        current = Math.max(0, Math.min(current, snapshots.length - 1));
+        var customSnapshot = snapshots[current];
+        clearGraph();
+        customFactory.draw(content, customSnapshot, {
+          make: make,
+          clear: clearGraph,
+          english: isEnglish()
+        });
+        setMetrics(kind, customSnapshot.metrics || []);
+        setStatus(customSnapshot.zh || '', customSnapshot.en || '');
+        if (head) {
+          head.textContent = kind.toUpperCase() + ' · STEP ' + (current + 1) + ' / ' + snapshots.length;
+        }
+        st.algoKind = kind;
+        st.algoSnapshots = snapshots.length;
+      } else if (st.mode === 'sort') {
+        if (st.sortKind === 'selection') {
+          snapshots = selectionTrace(values);
+        } else if (st.sortKind === 'insertion') {
+          snapshots = insertionTrace(values);
+        } else if (st.sortKind === 'merge') {
+          snapshots = mergeTrace(values);
+        } else if (st.sortKind === 'quick') {
+          snapshots = quickTrace(values);
+        } else {
+          st.sortKind = 'bubble';
+          snapshots = sortTrace(values);
+        }
+        current = Math.max(0, Math.min(current, snapshots.length - 1));
+        var s = snapshots[current];
+        var sortNames = {
+          bubble:'BUBBLE SORT', selection:'SELECTION SORT', insertion:'INSERTION SORT',
+          merge:'MERGE SORT', quick:'QUICK SORT'
+        };
+        drawBars(s, sortNames[st.sortKind] + ' · ASCENDING');
+        if (st.sortKind === 'bubble') {
+          setMetrics('sort', [s.comparisons, s.swaps, s.pass]);
+        } else {
+          setMetrics('sort-family', [s.comparisons, s.writes, s.phase]);
+        }
+        setStatus(s.zh, s.en);
+        if (head) {
+          head.textContent = sortNames[st.sortKind] + ' · STEP ' + (current + 1) + ' / ' + snapshots.length;
+        }
+        [].forEach.call(root.querySelectorAll('[data-algo-sort-kind]'), function (button) {
+          button.setAttribute('aria-pressed', button.getAttribute('data-algo-sort-kind') === st.sortKind ? 'true' : 'false');
+        });
+      } else if (st.mode === 'search') {
+        snapshots = searchTrace(st.searchMode);
+        current = Math.max(0, Math.min(current, snapshots.length - 1));
+        var q = snapshots[current];
+        drawSearchCells(q, (st.searchMode === 'linear' ? 'LINEAR SEARCH' : 'BINARY SEARCH'));
+        setMetrics('search', [q.comparisons, q.range[0] + '–' + q.range[1], q.found >= 0 ? q.found : '—']);
+        setStatus(q.zh, q.en);
+        [].forEach.call(root.querySelectorAll('[data-algo-search-mode]'), function (button) {
+          button.setAttribute('aria-pressed', button.getAttribute('data-algo-search-mode') === st.searchMode ? 'true' : 'false');
+        });
+        if (head) { head.textContent = (st.searchMode === 'linear' ? 'LINEAR' : 'BINARY') + ' · STEP ' + (current + 1) + ' / ' + snapshots.length; }
+      } else if (st.mode === 'cipher') {
+        snapshots = cipherTrace();
+        current = Math.max(0, Math.min(current, snapshots.length - 1));
+        var cipher = snapshots[current];
+        drawCipher(cipher);
+        setMetrics('cipher', [st.cipherShift, cipher.processed, cipher.processed ? cipher.source + '→' + cipher.target : '—']);
+        setStatus(cipher.zh, cipher.en);
+        [].forEach.call(root.querySelectorAll('[data-algo-cipher-direction]'), function (button) {
+          button.setAttribute('aria-pressed', button.getAttribute('data-algo-cipher-direction') === st.cipherDirection ? 'true' : 'false');
+        });
+        var shiftRange = root.querySelector('[data-algo-cipher-shift]');
+        if (shiftRange) { shiftRange.value = String(st.cipherShift); }
+        [].forEach.call(root.querySelectorAll('[data-algo-cipher-shift-value], [data-algo-cipher-shift-value-en]'), function (output) {
+          output.textContent = String(st.cipherShift);
+        });
+        if (head) {
+          head.textContent = (st.cipherDirection === 'decode' ? 'DECODE' : 'ENCODE') +
+            ' · STEP ' + (current + 1) + ' / ' + snapshots.length;
+        }
+      } else {
+        if (st.arithMode === 'gcd') {
+          snapshots = gcdTrace();
+          current = Math.max(0, Math.min(current, snapshots.length - 1));
+          var gcd = snapshots[current];
+          drawGcd(gcd);
+          setMetrics('gcd', [gcd.a, gcd.b, gcd.step]);
+          setStatus(gcd.zh, gcd.en);
+          if (head) { head.textContent = 'EUCLID GCD · STEP ' + current + ' / ' + (snapshots.length - 1); }
+        } else if (st.arithMode === 'repeat') {
+          snapshots = carryTrace();
+          current = 0;
+          var base = Number(root.getAttribute('data-repeat-base') || 3);
+          setMetrics('arith-repeat', [st.factor, st.factor - 1, base * st.factor]);
+          setStatus(base + ' × ' + st.factor + ' = ' + base + (st.factor > 1 ? ' + ' + Array(st.factor).fill(base).slice(1).join(' + ') : '') + ' = ' + (base * st.factor) + '。',
+            base + ' × ' + st.factor + ' is ' + st.factor + ' groups of ' + base + ', producing ' + (base * st.factor) + '.');
+          if (head) { head.textContent = 'REPEATED ADDITION'; }
+          if (nextBtn) { nextBtn.disabled = true; }
+          if (prevBtn) { prevBtn.disabled = true; }
+          if (playBtn) { playBtn.disabled = true; }
+        } else {
+          snapshots = carryTrace();
+          current = Math.max(0, Math.min(current, snapshots.length - 1));
+          var ar = snapshots[current];
+          drawArithmetic(ar);
+          var a = Number(root.getAttribute('data-a') || 38);
+          var b = Number(root.getAttribute('data-b') || 27);
+          setMetrics('arith', [current, ar.carry, ar.result === null ? '—' : ar.result]);
+          setStatus(ar.zh, ar.en);
+          if (head) { head.textContent = a + ' + ' + b + ' · STEP ' + current + ' / 3'; }
+        }
+        [].forEach.call(root.querySelectorAll('[data-algo-arith-mode]'), function (button) {
+          button.setAttribute('aria-pressed', button.getAttribute('data-algo-arith-mode') === st.arithMode ? 'true' : 'false');
+        });
+        var range = root.querySelector('[data-algo-factor]');
+        var repeatControl = root.querySelector('[data-algo-repeat-control]');
+        if (repeatControl) { repeatControl.hidden = st.arithMode !== 'repeat'; }
+        if (range) {
+          range.disabled = st.arithMode !== 'repeat';
+          range.value = String(st.factor);
+          [].forEach.call(root.querySelectorAll('[data-algo-factor-value], [data-algo-factor-value-en]'), function (output) {
+            output.textContent = String(st.factor);
+          });
+        }
+      }
+      updateNav(snapshots.length);
+      renderSamples();
+      var speedRange = root.querySelector('[data-algo-speed]');
+      if (speedRange) {
+        speedRange.value = String(st.speed);
+        speedRange.setAttribute('aria-label',
+          speedRange.getAttribute(isEnglish() ? 'data-en-label' : 'data-zh-label') || 'Speed');
+      }
+      [].forEach.call(root.querySelectorAll('[data-algo-speed-value]'), function (output) {
+        output.textContent = st.speed.toFixed(2) + '×';
+      });
+      [].forEach.call(root.querySelectorAll('[data-algo-speed-delay]'), function (output) {
+        output.textContent = playbackDelay() + 'ms';
+      });
+      root.classList.add('is-ready');
+    }
+
+    [].forEach.call(root.querySelectorAll('[data-algo-action]'), function (button) {
+      button.addEventListener('click', function () {
+        var action = button.getAttribute('data-algo-action');
+        root.setAttribute('data-interacted', 'true');
+        if (action === 'reset') {
+          stop(); current = 0; render();
+        } else if (action === 'prev') {
+          stop(); current = Math.max(0, current - 1); render();
+        } else if (action === 'next') {
+          stop(); current = Math.min(snapshots.length - 1, current + 1); render();
+        } else if (action === 'play') {
+          if (timer) { stop(); } else { play(); }
+        } else if (action === 'shuffle') {
+          stop();
+          if (customFactory && typeof customFactory.shuffle === 'function') {
+            customFactory.shuffle(root, st);
+          }
+          current = 0;
+          render();
+        }
+      });
+    });
+    [].forEach.call(root.querySelectorAll('[data-algo-search-mode]'), function (button) {
+      button.addEventListener('click', function () {
+        st.searchMode = button.getAttribute('data-algo-search-mode');
+        current = 0;
+        root.setAttribute('data-interacted', 'true');
+        stop();
+        render();
+      });
+    });
+    [].forEach.call(root.querySelectorAll('[data-algo-arith-mode]'), function (button) {
+      button.addEventListener('click', function () {
+        st.arithMode = button.getAttribute('data-algo-arith-mode');
+        current = 0;
+        root.setAttribute('data-interacted', 'true');
+        stop();
+        render();
+      });
+    });
+    [].forEach.call(root.querySelectorAll('[data-algo-sort-kind]'), function (button) {
+      button.addEventListener('click', function () {
+        st.sortKind = button.getAttribute('data-algo-sort-kind');
+        current = 0;
+        root.setAttribute('data-interacted', 'true');
+        stop();
+        render();
+      });
+    });
+    [].forEach.call(root.querySelectorAll('[data-algo-cipher-direction]'), function (button) {
+      button.addEventListener('click', function () {
+        st.cipherDirection = button.getAttribute('data-algo-cipher-direction');
+        current = 0;
+        root.setAttribute('data-interacted', 'true');
+        stop();
+        render();
+      });
+    });
+    var factor = root.querySelector('[data-algo-factor]');
+    if (factor) {
+      factor.addEventListener('input', function () {
+        st.factor = Number(factor.value);
+        root.setAttribute('data-interacted', 'true');
+        render();
+      });
+    }
+    var speed = root.querySelector('[data-algo-speed]');
+    if (speed) {
+      speed.min = String(speedMin);
+      speed.max = String(speedMax);
+      speed.addEventListener('input', function () {
+        var wasPlaying = !!timer;
+        st.speed = Math.max(speedMin, Math.min(speedMax, Number(speed.value)));
+        root.setAttribute('data-interacted', 'true');
+        if (wasPlaying) { stop(); }
+        render();
+        if (wasPlaying) { play(); }
+      });
+    }
+    var cipherShift = root.querySelector('[data-algo-cipher-shift]');
+    if (cipherShift) {
+      cipherShift.addEventListener('input', function () {
+        st.cipherShift = Number(cipherShift.value);
+        current = 0;
+        root.setAttribute('data-interacted', 'true');
+        stop();
+        render();
+      });
+    }
+    document.addEventListener('cw:lang', render);
+    document.addEventListener('cw:slide', function () {
+      var slide = root.closest('.slide');
+      if (!slide || !slide.classList.contains('on')) { stop(); }
+    });
+    render();
+  });
+
+  CW.define('three', function (root, st) {
+    var canvas = root.querySelector('.three-canvas');
+    var status = root.querySelector('.three-status');
+    var fallback = root.querySelector('[data-three-fallback]');
+    var T = window.THREE;
+    var scope = root.getAttribute('data-three-scope');
+    var sceneKind = root.getAttribute('data-three-scene') || 'hardware';
+    if (!canvas || !T) {
+      root.setAttribute('data-three-ready', 'false');
+      if (status) { status.textContent = '3D unavailable · static fallback'; }
+      return;
+    }
+    if (scope !== 'physical-hardware' && scope !== 'workflow-network') {
+      root.setAttribute('data-three-ready', 'false');
+      if (status) { status.textContent = '3D rejected · supported scope required'; }
+      console.warn('[three] use data-three-scope="physical-hardware" or "workflow-network"');
+      return;
+    }
+    var renderer, scene, camera, system, raycaster, pointer, drag = null;
+    var selected = null, auto = st.auto !== false, frame = 0;
+    var orbitRange = Number(root.getAttribute('data-network-orbit-range') || 0);
+    var orbitPhase = 0;
+    var labTheme = document.documentElement.getAttribute('data-theme') === 'lab';
+    var pulses = [];
+    var parts = [];
+    try {
+      renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.6));
+      renderer.outputColorSpace = T.SRGBColorSpace;
+      scene = new T.Scene();
+      camera = new T.PerspectiveCamera(42, 1, 0.1, 100);
+
+      if (sceneKind === 'workflow-network') {
+        camera.fov = 38;
+        camera.position.set(0, .7, 9.8);
+        camera.lookAt(0, 0, 0);
+        system = new T.Group();
+        scene.add(system);
+        var dataNode = root.querySelector('script[type="application/json"][data-three-network-data]');
+        var network = dataNode ? JSON.parse(dataNode.textContent || '{}') : {};
+        var nodeEntries = [];
+        var labelEntries = [];
+        var flowParticles = [];
+        var palette = ['#14698F', '#5E54A7', '#B07824', '#087A63', '#066B5B', '#C74432', '#2E6B5B', '#10251F'];
+        var cameraZ = 9.8;
+        var clock = new T.Clock();
+        var motionQuery = window.matchMedia
+          ? window.matchMedia('(prefers-reduced-motion: reduce)')
+          : null;
+        if (motionQuery && motionQuery.matches) { auto = false; }
+        root.setAttribute('data-three-motion', auto ? 'auto' : 'reduced');
+
+        function makeLabelTexture(title, sub, color) {
+          var labelCanvas = document.createElement('canvas');
+          labelCanvas.width = 512;
+          labelCanvas.height = 168;
+          var ctx = labelCanvas.getContext('2d');
+          ctx.clearRect(0, 0, labelCanvas.width, labelCanvas.height);
+          ctx.fillStyle = 'rgba(242,248,245,.9)';
+          ctx.strokeStyle = 'rgba(16,37,31,.22)';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.roundRect(8, 10, 496, 146, 26);
+          ctx.fill();
+          ctx.stroke();
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillStyle = color;
+          ctx.font = '700 38px "Cascadia Mono", monospace';
+          ctx.fillText(title, 256, 63);
+          ctx.fillStyle = '#38574D';
+          ctx.font = '600 25px "Noto Sans SC", sans-serif';
+          ctx.fillText(sub, 256, 112);
+          var texture = new T.CanvasTexture(labelCanvas);
+          texture.colorSpace = T.SRGBColorSpace;
+          return texture;
+        }
+
+        function makeLabelSprite(node) {
+          var lang = document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'zh';
+          var sub = lang === 'en' ? (node.subEn || '') : (node.subZh || '');
+          var sprite = new T.Sprite(new T.SpriteMaterial({
+            map: makeLabelTexture(node.title || node.id, sub, node.textColor || '#10251F'),
+            transparent: true,
+            depthTest: false
+          }));
+          var width = Number(node.labelScale) || 2.55;
+          sprite.scale.set(width, width * .328125, 1);
+          sprite.renderOrder = 20;
+          return sprite;
+        }
+
+        (network.nodes || []).forEach(function (node, index) {
+          var position = node.position || [0, 0, 0];
+          var color = new T.Color(node.color || palette[index % palette.length]);
+          var mesh = new T.Mesh(
+            new T.SphereGeometry(Number(node.radius) || .17, 24, 16),
+            new T.MeshBasicMaterial({ color: color })
+          );
+          mesh.position.set(position[0], position[1], position[2]);
+          mesh.userData.node = node;
+          system.add(mesh);
+          var labelSprite = null;
+          if (node.showLabel !== false) {
+            labelSprite = makeLabelSprite(node);
+            labelSprite.position.set(position[0], position[1] + (Number(node.labelY) || .38), position[2]);
+            system.add(labelSprite);
+          }
+          var entry = { node: node, mesh: mesh, label: labelSprite };
+          nodeEntries.push(entry);
+          labelEntries.push(entry);
+        });
+
+        (network.links || []).forEach(function (linkData) {
+          var sourceEntry = nodeEntries.find(function (entry) { return entry.node.id === linkData.source; });
+          var targetEntry = nodeEntries.find(function (entry) { return entry.node.id === linkData.target; });
+          if (!sourceEntry || !targetEntry) { return; }
+          var geometry = new T.BufferGeometry().setFromPoints([
+            sourceEntry.mesh.position,
+            targetEntry.mesh.position
+          ]);
+          var line = new T.Line(geometry, new T.LineBasicMaterial({
+            color: new T.Color(linkData.color || '#466B5F'),
+            transparent: true,
+            opacity: Number(linkData.opacity) || .36
+          }));
+          line.renderOrder = 1;
+          system.add(line);
+          var start = sourceEntry.mesh.position.clone();
+          var end = targetEntry.mesh.position.clone();
+          var direction = end.clone().sub(start);
+          var arrow = new T.Mesh(
+            new T.ConeGeometry(.055, .17, 8),
+            new T.MeshBasicMaterial({
+              color: new T.Color(linkData.color || '#466B5F'),
+              transparent: true,
+              opacity: .72
+            })
+          );
+          arrow.position.copy(start.clone().addScaledVector(direction, .68));
+          arrow.quaternion.setFromUnitVectors(
+            new T.Vector3(0, 1, 0),
+            direction.clone().normalize()
+          );
+          system.add(arrow);
+          var pulse = new T.Mesh(
+            new T.SphereGeometry(.04, 10, 8),
+            new T.MeshBasicMaterial({
+              color: new T.Color(linkData.color || '#466B5F')
+            })
+          );
+          pulse.userData.start = start;
+          pulse.userData.end = end;
+          pulse.userData.phase = flowParticles.length * .13;
+          system.add(pulse);
+          flowParticles.push(pulse);
+        });
+
+        var ring = new T.Mesh(
+          new T.TorusGeometry(.62, .009, 8, 96),
+          new T.MeshBasicMaterial({ color: 0x5f9b89, transparent: true, opacity: .7 })
+        );
+        ring.rotation.x = Math.PI / 2;
+        ring.position.set(0, -.12, 0);
+        system.add(ring);
+
+        function resizeNetwork() {
+          var width = Math.max(1, root.clientWidth);
+          var height = Math.max(1, root.clientHeight);
+          renderer.setSize(width, height, false);
+          camera.aspect = width / height;
+          camera.updateProjectionMatrix();
+        }
+
+        function setNetworkStatus(entry) {
+          if (!status) { return; }
+          var lang = document.documentElement.getAttribute('data-lang');
+          var detail = lang === 'en' ? entry.node.detailEn : entry.node.detailZh;
+          status.textContent = (entry.node.title || entry.node.id) + ' · ' + (detail || '');
+        }
+
+        function pickNode(event) {
+          var rect = canvas.getBoundingClientRect();
+          pointer = pointer || new T.Vector2();
+          pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+          raycaster = raycaster || new T.Raycaster();
+          raycaster.setFromCamera(pointer, camera);
+          var hits = raycaster.intersectObjects(nodeEntries.map(function (entry) { return entry.mesh; }), false);
+          if (hits.length) {
+            var entry = nodeEntries.find(function (item) { return item.mesh === hits[0].object; });
+            if (entry) {
+              selected = entry;
+              setNetworkStatus(entry);
+              root.dataset.interacted = 'true';
+            }
+          }
+        }
+
+        canvas.tabIndex = 0;
+        canvas.setAttribute('aria-label', localized(root, 'network-label') || '3D workflow network');
+        canvas.addEventListener('pointerdown', function (event) {
+          drag = {
+            x: event.clientX,
+            y: event.clientY,
+            rx: system.rotation.x,
+            ry: system.rotation.y,
+            moved: false
+          };
+          auto = false;
+          canvas.setPointerCapture && canvas.setPointerCapture(event.pointerId);
+        });
+        canvas.addEventListener('pointermove', function (event) {
+          if (!drag) { return; }
+          var dx = event.clientX - drag.x;
+          var dy = event.clientY - drag.y;
+          if (Math.abs(dx) + Math.abs(dy) > 4) { drag.moved = true; }
+          system.rotation.y = drag.ry + dx * .007;
+          system.rotation.x = Math.max(-.7, Math.min(.7, drag.rx + dy * .005));
+        });
+        canvas.addEventListener('pointerup', function (event) {
+          if (drag && !drag.moved) { pickNode(event); }
+          drag = null;
+          auto = !(motionQuery && motionQuery.matches);
+          updateToggle();
+        });
+        canvas.addEventListener('pointercancel', function () {
+          drag = null;
+          auto = !(motionQuery && motionQuery.matches);
+          updateToggle();
+        });
+        canvas.addEventListener('wheel', function (event) {
+          event.preventDefault();
+          cameraZ = Math.max(6.2, Math.min(12, cameraZ + event.deltaY * .0045));
+        }, { passive: false });
+        canvas.addEventListener('keydown', function (event) {
+          if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+            event.preventDefault();
+            auto = false;
+            system.rotation.y += event.key === 'ArrowLeft' ? -.16 : .16;
+          } else if (event.key === ' ' || event.key === 'Enter') {
+            event.preventDefault();
+            auto = !auto;
+          }
+        });
+        var toggle = root.querySelector('[data-three-toggle]');
+        var reset = root.querySelector('[data-three-reset]');
+        function updateToggle() {
+          if (!toggle) { return; }
+          toggle.setAttribute('aria-pressed', auto ? 'true' : 'false');
+          var zh = toggle.querySelector('.zh');
+          var en = toggle.querySelector('.en');
+          if (zh) { zh.textContent = auto ? '暂停环绕' : '继续环绕'; }
+          if (en) { en.textContent = auto ? 'Pause orbit' : 'Resume orbit'; }
+        }
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            auto = !auto;
+            updateToggle();
+          });
+        }
+        if (reset) {
+          reset.addEventListener('click', function () {
+            system.rotation.set(0, 0, 0);
+            orbitPhase = 0;
+            cameraZ = 9.8;
+            auto = !(motionQuery && motionQuery.matches);
+            updateToggle();
+            if (selected) { setNetworkStatus(selected); }
+          });
+        }
+        document.addEventListener('cw:lang', function () {
+          labelEntries.forEach(function (entry) {
+            if (!entry.label) { return; }
+            entry.label.material.map.dispose();
+            entry.label.material.map = makeLabelTexture(
+              entry.node.title || entry.node.id,
+              document.documentElement.getAttribute('data-lang') === 'en'
+                ? (entry.node.subEn || '')
+                : (entry.node.subZh || ''),
+              entry.node.textColor || '#10251F'
+            );
+            entry.label.material.needsUpdate = true;
+          });
+          if (selected) {
+            setNetworkStatus(selected);
+          } else if (status) {
+            status.textContent = localized(root, 'network-default') ||
+              'Drag to rotate · scroll to zoom · auto orbit';
+          }
+          canvas.setAttribute(
+            'aria-label',
+            localized(root, 'network-label') || '3D workflow network'
+          );
+          updateToggle();
+        });
+        if (motionQuery && motionQuery.addEventListener) {
+          motionQuery.addEventListener('change', function (event) {
+            if (event.matches) { auto = false; }
+            root.setAttribute('data-three-motion', auto ? 'auto' : 'reduced');
+            updateToggle();
+          });
+        }
+        updateToggle();
+        root.setAttribute('data-three-ready', 'true');
+        root.setAttribute('data-three-lighting', 'none');
+        resizeNetwork();
+        if (window.ResizeObserver) { new ResizeObserver(resizeNetwork).observe(root); }
+        if (status) {
+          status.textContent = localized(root, 'network-default') || 'Drag to rotate · auto orbit';
+        }
+        function renderNetwork() {
+          frame = requestAnimationFrame(renderNetwork);
+          var active = root.closest('.slide') && root.closest('.slide').classList.contains('on');
+          if (!active) { return; }
+          var t = clock.getElapsedTime();
+          if (auto) {
+            if (orbitRange > 0) {
+              orbitPhase += .012;
+              system.rotation.y = Math.sin(orbitPhase) * orbitRange;
+            } else {
+              system.rotation.y += .0031;
+            }
+          }
+          ring.rotation.z = t * .24;
+          flowParticles.forEach(function (pulse, index) {
+            if (!auto && motionQuery && motionQuery.matches) { return; }
+            var progress = (t * .22 + pulse.userData.phase + index * .017) % 1;
+            pulse.position.lerpVectors(
+              pulse.userData.start,
+              pulse.userData.end,
+              progress
+            );
+          });
+          camera.position.z += (cameraZ - camera.position.z) * .08;
+          camera.lookAt(0, 0, 0);
+          renderer.render(scene, camera);
+        }
+        renderNetwork();
+        return;
+      }
+
+      camera.position.set(0, 2.8, 7.4);
+      camera.lookAt(0, 0, 0);
+      system = new T.Group();
+      scene.add(system);
+      scene.add(new T.AmbientLight(labTheme ? 0xf5f7f7 : 0xffffff, labTheme ? 1.7 : 1.5));
+      var key = new T.DirectionalLight(labTheme ? 0xffffff : 0xffd9a3, labTheme ? 2.4 : 3.2);
+      key.position.set(4, 7, 5);
+      scene.add(key);
+      var rim = new T.PointLight(labTheme ? 0xffffff : 0x7dd3fc, labTheme ? 7 : 12, 20);
+      rim.position.set(-5, 1, 4);
+      scene.add(rim);
+
+      function addBox(name, x, y, z, w, h, d, color, detailKey) {
+        var geometry = new T.BoxGeometry(w, h, d);
+        var material = new T.MeshStandardMaterial({
+          color: labTheme ? (detailKey === 'cpu' ? 0x737b78 : detailKey === 'cache' ? 0x858d8a : detailKey === 'memory' ? 0x68706d : 0x505754) : color,
+          roughness: labTheme ? .94 : .48,
+          metalness: labTheme ? .015 : .24
+        });
+        var mesh = new T.Mesh(geometry, material);
+        mesh.position.set(x, y, z);
+        mesh.userData.part = detailKey;
+        system.add(mesh);
+        if (detailKey) { parts.push(mesh); }
+        return mesh;
+      }
+      addBox('BOARD', 0, -1.0, 0, 7.0, .12, 3.6, 0x15231f, null);
+      addBox('CPU', -2.35, -.15, 0, 1.7, 1.5, 1.55, 0x253248, 'cpu');
+      addBox('CACHE', -.55, -.4, 0, .75, 1.0, 1.25, 0x2d4b55, 'cache');
+      addBox('MEMORY', 2.1, -.55, 0, 1.7, .7, 1.35, 0x34304b, 'memory');
+
+      function addCable(points, pulseCount, phase) {
+        var curve = new T.CatmullRomCurve3(points.map(function (point) {
+          return new T.Vector3(point[0], point[1], point[2]);
+        }));
+        var cable = new T.Mesh(
+          new T.TubeGeometry(curve, 64, .038, 10, false),
+          new T.MeshStandardMaterial({
+            color: labTheme ? 0x303734 : 0x33404a,
+            roughness: .78,
+            metalness: .12
+          })
+        );
+        system.add(cable);
+        [0.006, .994].forEach(function (t) {
+          var connector = new T.Mesh(
+            new T.CylinderGeometry(.072, .072, .2, 14),
+            new T.MeshStandardMaterial({
+              color: labTheme ? 0x555e5a : 0x53616a,
+              roughness: .5,
+              metalness: .32
+            })
+          );
+          connector.position.copy(curve.getPointAt(t));
+          connector.quaternion.setFromUnitVectors(
+            new T.Vector3(0, 1, 0),
+            curve.getTangentAt(t).normalize()
+          );
+          system.add(connector);
+        });
+        for (var p = 0; p < pulseCount; p++) {
+          var pulse = new T.Mesh(
+            new T.TorusGeometry(.048, .013, 8, 20),
+            new T.MeshBasicMaterial({
+              color: labTheme ? (p % 2 ? 0xe1e8e4 : 0xb8c3bd) : (p % 2 ? 0x7de2c3 : 0xffb454),
+              transparent: true,
+              opacity: .95
+            })
+          );
+          pulse.userData.curve = curve;
+          pulse.userData.offset = phase + p / pulseCount;
+          pulse.userData.speed = .09 + p * .018;
+          system.add(pulse);
+          pulses.push(pulse);
+        }
+      }
+      addCable([
+        [-1.48, -.55, .55], [-1.25, -.82, .78], [-.92, -.68, .45],
+        [-.2, -.78, .42], [.7, -.82, .55], [1.24, -.62, .5]
+      ], 3, 0);
+      addCable([
+        [1.24, -.45, -.5], [.6, -.8, -.65], [-.15, -.82, -.65],
+        [-.92, -.7, -.5], [-1.48, -.45, -.5]
+      ], 2, .34);
+      addCable([
+        [-1.48, -.2, -.1], [-1.3, -.6, -.4], [-1.1, -.72, -.15], [-.92, -.55, .1]
+      ], 2, .61);
+
+      raycaster = new T.Raycaster();
+      pointer = new T.Vector2();
+      function select(mesh) {
+        if (!mesh) { return; }
+        selected = mesh.userData.part;
+        var title = localized(root, selected + '-title') || selected;
+        var detail = localized(root, selected + '-detail');
+        if (status) { status.textContent = title + ' · ' + detail; }
+        document.dispatchEvent(new CustomEvent('cw:three-select', { detail: { key: selected } }));
+      }
+      function resize() {
+        var w = Math.max(1, root.clientWidth), h = Math.max(1, root.clientHeight);
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+      function hit(e) {
+        var rect = canvas.getBoundingClientRect();
+        pointer.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+        var found = raycaster.intersectObjects(parts, false);
+        if (found.length) { root.setAttribute('data-interacted', 'true'); select(found[0].object); }
+      }
+      canvas.addEventListener('pointerdown', function (e) {
+        drag = { x: e.clientX, y: e.clientY, rx: system.rotation.x, ry: system.rotation.y, moved: false };
+        auto = false;
+        canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+      });
+      canvas.addEventListener('pointermove', function (e) {
+        if (!drag) { return; }
+        var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        if (Math.abs(dx) + Math.abs(dy) > 5) { drag.moved = true; }
+        system.rotation.y = drag.ry + dx * .007;
+        system.rotation.x = Math.max(-.7, Math.min(.7, drag.rx + dy * .005));
+      });
+      canvas.addEventListener('pointerup', function (e) {
+        if (drag && !drag.moved) { hit(e); }
+        drag = null;
+      });
+      canvas.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault(); auto = false;
+          system.rotation.y += e.key === 'ArrowLeft' ? -.14 : .14;
+        }
+      });
+      var toggle = root.querySelector('[data-three-toggle]');
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          auto = !auto;
+          toggle.setAttribute('aria-pressed', auto ? 'true' : 'false');
+          toggle.classList.toggle('is-paused', !auto);
+        });
+      }
+      var reset = root.querySelector('[data-three-reset]');
+      if (reset) {
+        reset.addEventListener('click', function () {
+          system.rotation.set(0, 0, 0);
+          camera.position.set(0, 2.8, 7.4);
+          camera.lookAt(0, 0, 0);
+          auto = true;
+          if (toggle) { toggle.setAttribute('aria-pressed', 'true'); }
+        });
+      }
+      document.addEventListener('cw:lang', function () {
+        if (selected) { select(parts.find(function (p) { return p.userData.part === selected; })); }
+      });
+      root.setAttribute('data-three-ready', 'true');
+      resize();
+      if (window.ResizeObserver) { new ResizeObserver(resize).observe(root); }
+      st.auto = auto;
+      var clock = new T.Clock();
+      function render() {
+        frame = requestAnimationFrame(render);
+        var active = root.closest('.slide') && root.closest('.slide').classList.contains('on');
+        if (!active) { return; }
+        var t = clock.getElapsedTime();
+        if (auto) { system.rotation.y += .0023; }
+        pulses.forEach(function (p, i) {
+          var k = (t * p.userData.speed + p.userData.offset) % 1;
+          p.position.copy(p.userData.curve.getPointAt(k));
+          p.quaternion.setFromUnitVectors(
+            new T.Vector3(0, 0, 1),
+            p.userData.curve.getTangentAt(k).normalize()
+          );
+          p.scale.setScalar(.72 + Math.sin((t * 2.8) + i) * .12);
+        });
+        renderer.render(scene, camera);
+      }
+      render();
+      select(parts[0]);
+    } catch (err) {
+      root.setAttribute('data-three-ready', 'false');
+      if (status) { status.textContent = '3D init failed · static fallback'; }
+      if (fallback) { fallback.removeAttribute('aria-hidden'); }
+      console.warn('[three]', err);
+    }
+  });
+})();
+</script>
+
+<!-- ── M4 首屏启动 ── -->
+<script>
+(function () {
+  'use strict';
+  var CW = window.CW;
+  var first = document.querySelector('.slide.on');
+  if (!CW || !first) { return; }
+  if (CW.play) { CW.play(first); }
+  if (CW.mountAll) { CW.mountAll(first); }
+})();
+</script>
+</body>
+</html>

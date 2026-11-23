@@ -1,0 +1,17 @@
+{
+  "name": "courseware-workflow",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Portable Lab HTML courseware Agent Skill and Codex plugin",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node scripts/release.mjs --check",
+    "privacy:check": "node scripts/privacy-check.mjs",
+    "release:manifest": "node scripts/release.mjs --sync-manifest",
+    "release:publish": "node scripts/release.mjs --publish"
+  }
+}

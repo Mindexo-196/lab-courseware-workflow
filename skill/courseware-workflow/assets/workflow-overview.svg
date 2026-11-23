@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="810" viewBox="0 0 1440 810" role="img" aria-label="Courseware workflow overview">
+  <rect width="1440" height="810" fill="#061A1B"/>
+  <text x="80" y="92" fill="#F7F2E7" font-family="sans-serif" font-size="44" font-weight="700">Courseware Workflow</text>
+  <text x="80" y="140" fill="#9EC7BD" font-family="sans-serif" font-size="21">Idea → live.json → preview → review → approve → delivery</text>
+  <g font-family="sans-serif" font-size="20" text-anchor="middle">
+    <rect x="80" y="220" width="210" height="104" rx="24" fill="#F7F2E7"/>
+    <text x="185" y="268" fill="#061A1B" font-weight="700">用户需求</text>
+    <text x="185" y="298" fill="#52615E">conversation</text>
+    <rect x="350" y="220" width="210" height="104" rx="24" fill="#EFFF54"/>
+    <text x="455" y="268" fill="#061A1B" font-weight="700">唯一状态</text>
+    <text x="455" y="298" fill="#405000">live.json</text>
+    <rect x="620" y="220" width="210" height="104" rx="24" fill="#F7F2E7"/>
+    <text x="725" y="268" fill="#061A1B" font-weight="700">真实预览</text>
+    <text x="725" y="298" fill="#52615E">preview.html</text>
+    <rect x="890" y="220" width="210" height="104" rx="24" fill="#F7F2E7"/>
+    <text x="995" y="268" fill="#061A1B" font-weight="700">基础审查</text>
+    <text x="995" y="298" fill="#52615E">severity sorted</text>
+    <rect x="1160" y="220" width="200" height="104" rx="24" fill="#0B8C76"/>
+    <text x="1260" y="268" fill="#FFFFFF" font-weight="700">批准交付</text>
+    <text x="1260" y="298" fill="#D9FFF5">HTML · MD · JSON</text>
+    <path d="M290 272h60M560 272h60M830 272h60M1100 272h60" stroke="#9EC7BD" stroke-width="4"/>
+    <path d="m340 264 10 8-10 8M610 264l10 8-10 8M880 264l10 8-10 8M1150 264l10 8-10 8" fill="none" stroke="#9EC7BD" stroke-width="4"/>
+    <rect x="275" y="470" width="890" height="160" rx="30" fill="#0E2A2B" stroke="#29615B" stroke-width="2"/>
+    <text x="720" y="520" fill="#F7F2E7" font-size="25" font-weight="700">Main Agent by default · optional single subagent only on request</text>
+    <text x="720" y="566" fill="#9EC7BD" font-size="20">项目 CST 优先 · 包内三件套兜底 · memory.json 只做上下文交接</text>
+    <text x="720" y="604" fill="#9EC7BD" font-size="20">每个交互屏至少两个联动组件 · 一轮审查后进入人工迭代</text>
+  </g>
+</svg>

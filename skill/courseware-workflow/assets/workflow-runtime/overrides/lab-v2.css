@@ -1,0 +1,16 @@
+/* Workflow V2.0 global Lab theme rules. Page-specific CSS belongs in live.json. */
+:root {
+  --workflow-block-gap: 18px;
+  --font-scale: 1.08;
+}
+
+html[data-theme="lab"] .h2,
+html[data-theme="lab"] .cover-title .zh,
+html[data-theme="lab"] .cover-title .en {
+  font-family: var(--serif);
+}
+
+.body-area > :not(:first-child),
+.wx-body > :not(:first-child) {
+  margin-top: var(--workflow-block-gap);
+}

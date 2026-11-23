@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workflow-live-v2.schema.json",
+  "title": "Courseware live task",
+  "description": "V2.0 唯一任务状态源。Generator、Builder、Reviewer、人工反馈和交付都读写此文件。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "version",
+    "task_id",
+    "phase",
+    "brief",
+    "cst",
+    "deck",
+    "review",
+    "human",
+    "preview",
+    "history"
+  ],
+  "properties": {
+    "schema": {"const": "workflow/live/v2"},
+    "version": {"const": "2.0"},
+    "task_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "phase": {
+      "type": "string",
+      "enum": ["draft", "building", "review_pending", "awaiting_human", "approved", "delivered", "blocked"]
+    },
+    "brief": {
+      "type": "object",
+      "required": ["objective", "audience", "scope", "delivery"],
+      "properties": {
+        "objective": {"type": "string", "minLength": 1},
+        "audience": {"type": "string", "minLength": 1},
+        "scope": {"type": "string", "minLength": 1},
+        "delivery": {"type": "string", "minLength": 1},
+        "constraints": {"type": "array", "items": {"type": "string"}}
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": ["mode", "original_ref", "working_ref", "sha256"],
+      "properties": {
+        "mode": {"const": "copy-on-write"},
+        "original_ref": {"type": "string", "minLength": 1},
+        "working_ref": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "cst": {
+      "type": "object",
+      "required": ["content_ref", "skill_ref", "template_ref", "hashes"],
+      "properties": {
+        "content_ref": {"const": "CST/CONTENT.md"},
+        "skill_ref": {"const": "CST/SKILL.md"},
+        "template_ref": {"const": "CST/TEMPLATE.html"},
+        "hashes": {
+          "type": "object",
+          "required": ["content", "skill", "template"],
+          "properties": {
+            "content": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "skill": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "template": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "deck": {
+      "type": "object",
+      "required": ["theme", "metadata", "content", "slides"],
+      "properties": {
+        "theme": {"const": "lab"},
+        "metadata": {"type": "object"},
+        "content": {"type": "object"},
+        "interaction": {"type": ["object", "null"]},
+        "style_overrides": {"type": "array", "items": {"type": "string"}},
+        "slides": {"type": "array", "minItems": 2, "items": {"type": "object"}}
+      },
+      "additionalProperties": false
+    },
+    "review": {
+      "type": "object",
+      "required": ["status", "issues", "summary", "artifact_sha256"],
+      "properties": {
+        "status": {"type": "string", "enum": ["pending", "pass", "needs_revision"]},
+        "issues": {"type": "array", "items": {"$ref": "#/$defs/issue"}},
+        "summary": {"type": "string"},
+        "artifact_sha256": {"type": "string"},
+        "reviewed_at": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "human": {
+      "type": "object",
+      "required": ["decision", "notes", "updated_at"],
+      "properties": {
+        "decision": {"type": "string", "enum": ["pending", "approve", "revise", "abort"]},
+        "notes": {"type": "string"},
+        "updated_at": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "preview": {
+      "type": "object",
+      "required": ["html_ref", "html_sha256", "artifact_sha256", "checks"],
+      "properties": {
+        "html_ref": {"type": "string"},
+        "html_sha256": {"type": "string"},
+        "artifact_sha256": {"type": "string"},
+        "checks": {
+          "type": "object",
+          "required": ["static", "browser"],
+          "properties": {
+            "static": {"type": "object"},
+            "browser": {"type": "object"}
+          },
+          "additionalProperties": false
+        },
+        "checked_at": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "html_ref": {"type": "string"},
+        "json_ref": {"type": "string"},
+        "markdown_ref": {"type": "string"},
+        "delivered_at": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "usage": {
+      "type": "object",
+      "properties": {
+        "input_tokens": {"type": "integer", "minimum": 0},
+        "cached_tokens": {"type": "integer", "minimum": 0},
+        "output_tokens": {"type": "integer", "minimum": 0},
+        "total_tokens": {"type": "integer", "minimum": 0},
+        "estimated_cost_cny": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["at", "action"],
+        "properties": {
+          "at": {"type": "string"},
+          "action": {"type": "string"},
+          "note": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "issue": {
+      "type": "object",
+      "required": ["id", "severity", "area", "message", "suggestion"],
+      "properties": {
+        "id": {"type": "string"},
+        "severity": {"type": "string", "enum": ["critical", "high", "medium", "low"]},
+        "area": {"type": "string"},
+        "slide_id": {"type": "string"},
+        "message": {"type": "string", "minLength": 1},
+        "suggestion": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  }
+}

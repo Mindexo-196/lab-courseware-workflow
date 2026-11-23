@@ -1,0 +1,123 @@
+{
+  "schema": "workflow/task-content/v1",
+  "version": "1.0",
+  "task_id": "content-workflow-smoke-test",
+  "theme": "lab",
+  "style_overrides": [
+    ".example-scope { outline-color: transparent; }"
+  ],
+  "brief": {
+    "objective": "演示从内容输入到课件构建、检查和交付的自动化工作流",
+    "audience": "课程项目维护者",
+    "scope": "三屏最小课件：封面、关系审查说明、流程练习",
+    "delivery": "可运行 HTML、阶段 JSON、静态检查报告和工作流状态",
+    "constraints": [
+      "不引入远程运行时",
+      "保持中英文双语",
+      "模板标记必须在装配后清零"
+    ]
+  },
+  "metadata": {
+    "course": "计算机科学概论",
+    "course_en": "Introduction to Computer Science",
+    "chapter": "工作流示例",
+    "chapter_en": "Workflow Example",
+    "part": "第 1 部分",
+    "part_en": "Part 1",
+    "range": "流程验证",
+    "range_en": "Workflow Validation",
+    "deck_title": "从内容到课件",
+    "deck_title_en": "From Content to Courseware",
+    "deck_sub": "双 Agent 隔离生成与审查，由脚本装配和验证",
+    "deck_sub_en": "Separated generation and review with deterministic assembly",
+    "date": "2026-11-21",
+    "members": "2622647 林政赫",
+    "members_en": "2622647 Lin Zhenghe",
+    "deck_version": "1.0"
+  },
+  "content": {
+    "learning_outcomes": [
+      "说明 Content、Skill、Template 三层的关系",
+      "根据失败证据选择正确的局部返工层"
+    ],
+    "key_messages": [
+      {
+        "zh": "先生成可交互初版，再执行一次基础审查并由人工迭代。",
+        "en": "Build an interactive draft, run one basic review, then iterate with the maker."
+      },
+      {
+        "zh": "装配和验证应由确定性脚本执行。",
+        "en": "Assembly and validation should run through deterministic scripts."
+      }
+    ],
+    "evidence": [
+      "三份计划分别保存为 JSON",
+      "每轮只执行一次基础审查",
+      "构建结果同时经过静态检查和浏览器检查"
+    ],
+    "sources": [
+      {
+        "title": "CST Workflow",
+        "ref": "Workflow/workflow.md"
+      }
+    ]
+  },
+  "human_review": {
+    "checkpoints": [],
+    "questions": []
+  },
+  "slides": [
+    {
+      "id": "s1",
+      "type": "screen-cover",
+      "visual_html": "<svg role=\"img\" viewBox=\"0 0 600 600\"><title>内容到课件的自动化流水线</title><g fill=\"none\" stroke=\"#7DD3FC\" stroke-width=\"4\"><rect x=\"100\" y=\"90\" width=\"400\" height=\"100\" rx=\"18\"/><rect x=\"100\" y=\"250\" width=\"400\" height=\"100\" rx=\"18\"/><rect x=\"100\" y=\"410\" width=\"400\" height=\"100\" rx=\"18\"/><path d=\"M300 190v60M300 350v60\"/></g><g fill=\"#F2EFE7\" font-size=\"34\" text-anchor=\"middle\"><text x=\"300\" y=\"150\">INPUT</text><text x=\"300\" y=\"310\">REVIEW</text><text x=\"300\" y=\"470\">DELIVER</text></g></svg>"
+    },
+    {
+      "id": "s2",
+      "type": "screen-text",
+      "eyebrow": "01 · 自动化",
+      "eyebrow_en": "01 · AUTOMATION",
+      "title": "一份内容源驱动全部阶段",
+      "title_en": "One content source drives every stage",
+      "lead": "编排器先生成可交互初版，再执行一次基础审查并由人工决定下一轮。",
+      "lead_en": "The orchestrator builds an interactive draft, runs one basic review, and lets the maker decide the next cycle.",
+      "body_html": "<div class=\"chain\"><span class=\"card\"><b>Source</b><br>内容输入</span><span class=\"card\"><b>Review</b><br>基础审查</span><span class=\"card\"><b>Iterate</b><br>人工迭代</span></div>",
+      "note": "用户满意后进入封装交付，不设固定返工次数。",
+      "note_en": "Package only after explicit approval, without a fixed revision limit."
+    },
+    {
+      "id": "s3",
+      "type": "screen-quiz",
+      "eyebrow": "02 · Gate",
+      "eyebrow_en": "02 · GATE",
+      "title": "审查后应该何时交付？",
+      "title_en": "When should the deck be delivered?",
+      "body_html": "<div class=\"quiz-q\"><p><span class=\"zh\">基础审查列出问题后，何时进入封装交付？</span><span class=\"en\">When should packaging start after the basic review?</span></p><button class=\"opt\" type=\"button\" data-ok=\"false\"><span class=\"zh\">问题一出现就立即交付</span><span class=\"en\">Deliver immediately after any issue appears</span></button><button class=\"opt\" type=\"button\" data-ok=\"true\"><span class=\"zh\">人工完成必要迭代并明确满意后</span><span class=\"en\">After the maker finishes necessary iterations and explicitly approves</span></button><div class=\"why\"><span class=\"zh\">审查负责指出问题，最终是否可交付由制作者确认。</span><span class=\"en\">Review identifies issues; the maker confirms whether the deck is ready.</span></div></div>",
+      "linked_components": [
+        {
+          "name": "答案选项",
+          "type": "quiz",
+          "role": "input"
+        },
+        {
+          "name": "正误反馈",
+          "type": "readout",
+          "role": "feedback"
+        },
+        {
+          "name": "解析说明",
+          "type": "text",
+          "role": "explanation"
+        }
+      ],
+      "linked_state": "delivery-gate-check",
+      "widget": {
+        "key": "quiz",
+        "instance_key": "quiz-content-workflow",
+        "title": "Gate 判断",
+        "title_en": "Gate check",
+        "value": "未作答"
+      }
+    }
+  ]
+}

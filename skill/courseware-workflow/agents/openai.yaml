@@ -1,0 +1,8 @@
+# Codex/OpenAI Agent 的界面元数据。
+interface:
+  # Skill 在界面中的中文名称。
+  display_name: "课件工作流"
+  # Skill 选择列表中的简短中文说明。
+  short_description: "主 Agent 默认完成，按需最多一个子 Agent"
+  # 用户首次调用时注入的默认提示词。
+  default_prompt: "使用 $courseware-workflow 由主 Agent 以 live.json 为唯一状态完成制作与交付；仅在我明确要求时使用一个子 Agent。"
